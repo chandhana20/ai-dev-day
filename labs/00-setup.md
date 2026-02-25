@@ -7,7 +7,7 @@
 
 ## Step 1 — Log into Databricks
 
-1. Open your browser and go to: **https://e2-demo-west.cloud.databricks.com/**
+1. Open your browser and go to Databricks workspace
 2. Log in with your credentials.
 
 ---
@@ -15,7 +15,7 @@
 ## Step 2 — Verify Your Data
 
 1. In the left sidebar, click **Catalog**.
-2. Navigate to: **main → cp_nvidia**
+2. Navigate to your datasets
 3. Confirm you can see the following volumes under the **Volumes** tab:
    - `10k`
    - `10q`
@@ -30,10 +30,8 @@
 
 ## Step 3 — Verify the Delta Tables
 
-Still in **main → cp_nvidia**, click the **Tables** tab and confirm these tables exist:
+click the **Tables** tab and confirm these tables exist:
 
-- `10k_parsed`
-- `call_transcripts_parsed`
 - `ticker_data_mag7`
 
 Click `ticker_data_mag7` → **Sample Data** to make sure it has rows.
@@ -60,7 +58,7 @@ Run this quick SQL to confirm data is accessible:
 
 ```sql
 SELECT company_name, price_close, date
-FROM main.cp_nvidia.ticker_data_mag7
+FROM catalog.schema.ticker_data_mag7
 WHERE company_name = 'NVDA'
 ORDER BY date DESC
 LIMIT 5;
