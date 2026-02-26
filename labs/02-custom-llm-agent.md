@@ -30,7 +30,7 @@ You will use **AgentBricks → Custom LLM** to:
 ## Step 2 — Connect Your Data Source
 
 1. Under **Data Source**, select **Unity Catalog Table**.
-2. Choose: **main → cp_nvidia → call_transcripts_parsed**
+2. Choose: **your catalog → your schema → call_transcripts_parsed**
 3. Click **Sample Documents** to load a few transcripts for testing.
 4. Click **Next**.
 

@@ -38,7 +38,7 @@ The supervisor decides which tool to call — or calls both — depending on the
 ## Prerequisites
 
 Before starting this lab, confirm you have:
-- ✅ Lab 1 complete: KIE pipeline table exists in `main.cp_nvidia`
+- ✅ Lab 1 complete: KIE pipeline table exists in `catalog.schema`
 - ✅ Lab 3 complete: Knowledge assistant `mag7-financial-research-assistant` is deployed
 - ✅ Lab 4 complete: Genie space `mag7-financial-analytics` is active
 

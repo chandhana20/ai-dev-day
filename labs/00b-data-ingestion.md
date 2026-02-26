@@ -14,8 +14,7 @@ The agent labs (Labs 1–5) all depend on structured Delta tables derived from t
 ## Architecture
 
 ```
-eg.
-/Volumes/main/cp_nvidia/
+/Volumes/catalog/schema/
   ├── 10k/               (raw PDFs)
   ├── 10q/               (raw PDFs)
   ├── call_transcripts/  (raw PDFs)
@@ -26,9 +25,9 @@ eg.
   [ETL Pipeline — this lab]
          │
          ▼
-  main.cp_nvidia.10k_parsed          ← text extracted from 10-Ks
-  main.cp_nvidia.call_transcripts_parsed  ← text from transcripts
-  main.cp_nvidia.ticker_data_mag7    ← stock price time series
+  catalog.schema.10k_parsed          ← text extracted from 10-Ks
+  catalog.schema.call_transcripts_parsed  ← text from transcripts
+  catalog.schema.ticker_data_mag7    ← stock price time series
 ```
 
 ---
@@ -70,8 +69,17 @@ The Assistant will explain, modify, or generate code inline. Click **Accept** to
 ### Step 3 — Update the Volume Path
 
 Before running, update the volume path to match your workspace:
-Use **Databricks Assistant** to help: select the cell and ask:
-   > "Update this notebook to use the volume path /Volumes/main/cp_nvidia/10k and the schema main.cp_nvidia"
+
+1. Find the cell with:
+   ```python
+   volume_path = "/Volumes/catalog/schema/raw"
+   ```
+2. Change it to match your volume path:
+   ```python
+   volume_path = "/Volumes/catalog/schema/10k"
+   ```
+3. Use **Databricks Assistant** to help: select the cell and ask:
+   > "Update this notebook to use the volume path /Volumes/catalog/schema/10k and the schema catalog.schema"
 
 ---
 
@@ -80,13 +88,13 @@ Use **Databricks Assistant** to help: select the cell and ask:
 1. At the top, attach to a cluster (use **Serverless** if available, otherwise select any running cluster).
 2. Click **Run All** (or `Shift+Enter` cell by cell to follow along).
 3. The notebook will:
-   - Create the `main.cp_nvidia` schema if it doesn't exist
+   - Create the `catalog.schema` schema if it doesn't exist
    - Read PDFs from the volume
    - Extract text content into rows
    - Write parsed tables to Unity Catalog
 
 4. After completion, verify in the Catalog:
-   - Go to **Catalog → main → cp_nvidia → Tables**
+   - Go to **Catalog → your catalog → your schema → Tables**
    - Confirm `10k_parsed` and `call_transcripts_parsed` appear
 
 ---
@@ -104,7 +112,7 @@ The Databricks **Data Science Agent** can write full notebook sections from a pl
 
 Type this prompt:
 
-> "Write a new notebook section that reads all PDF files from /Volumes/main/cp_nvidia/earning_releases, extracts the text from each PDF using pdfplumber or PyMuPDF, creates a Spark DataFrame with columns: filename, company_name (extracted from filename), doc_type='earning_release', text_content, word_count, and ingested_at. Write the result to main.cp_nvidia.earning_releases_parsed."
+> "Write a new notebook section that reads all PDF files from /Volumes/catalog/schema/earning_releases, extracts the text from each PDF using pdfplumber or PyMuPDF, creates a Spark DataFrame with columns: filename, company_name (extracted from filename), doc_type='earning_release', text_content, word_count, and ingested_at. Write the result to catalog.schema.earning_releases_parsed."
 
 The agent will:
 - Generate the full PySpark code
@@ -173,12 +181,12 @@ This copies all skills into `.claude/skills/` — Claude Code loads them automat
 With Claude Code open (run `claude` in the ai-dev-kit project directory), type:
 
 ```
-Build a Spark Declarative Pipeline for the NVIDIA Finance Build-a-Thon that:
+Build a Spark Declarative Pipeline for the Finance AI Build-a-Thon that:
 
 Bronze layer:
-- Reads all PDF files from /Volumes/main/cp_nvidia/10k/ as binary files
+- Reads all PDF files from /Volumes/catalog/schema/10k/ as binary files
 - Extracts file metadata (filename, file_size, ingested_at)
-- Writes to main.cp_nvidia.bronze_10k_files
+- Writes to catalog.schema.bronze_10k_files
 
 Silver layer:
 - Reads bronze_10k_files
@@ -186,15 +194,15 @@ Silver layer:
 - Parses the company ticker from the filename
 - Adds doc_type = '10k'
 - Applies a data quality expectation: drop rows where text_content is NULL
-- Writes to main.cp_nvidia.silver_10k_parsed
+- Writes to catalog.schema.silver_10k_parsed
 
 Gold layer:
 - Reads silver_10k_parsed
 - Computes word_count, unique_words, and estimated_pages per document
 - Groups by company ticker with document count
-- Writes to main.cp_nvidia.gold_10k_summary
+- Writes to catalog.schema.gold_10k_summary
 
-Use the catalog main and schema cp_nvidia. Use serverless compute.
+Use the catalog and schema you are using. Use serverless compute.
 ```
 
 Claude Code will:
@@ -208,7 +216,7 @@ Claude Code will:
 ### Step 4 — Watch the Pipeline Run
 
 1. In Databricks, go to **Workflows → Delta Live Tables** (or **Lakeflow Pipelines**).
-2. Find `nvidia-finance-etl-pipeline`.
+2. Find `finance-etl-pipeline`.
 3. Click into it — you'll see the live DAG showing bronze → silver → gold flowing.
 4. Wait for status to show **Completed**.
 
@@ -217,7 +225,7 @@ Claude Code will:
 ```sql
 -- In the Databricks SQL Editor:
 SELECT company_ticker, word_count, estimated_pages
-FROM main.cp_nvidia.gold_10k_summary
+FROM catalog.schema.gold_10k_summary
 ORDER BY company_ticker;
 ```
 
@@ -231,7 +239,7 @@ For a real deployment, you want new filings to be processed automatically:
 
 1. In Claude Code, type:
    ```
-   Add a daily schedule to the nvidia-finance-etl-pipeline so it runs at 7am UTC
+   Add a daily schedule to the finance-etl-pipeline so it runs at 7am UTC
    ```
 
 2. Or in Databricks UI: go to your pipeline → **Settings** → **Trigger** → **Scheduled** → set frequency.
@@ -248,6 +256,6 @@ You now have three tools in your toolkit for data ingestion:
 | **Data Science Agent** | Generating new notebook sections from plain English descriptions |
 | **AI Dev Kit + SDP** | Scaffolding production-grade ETL pipelines with bronze/silver/gold architecture |
 
-All three feed into the same output: clean Delta tables in `main.cp_nvidia` that power the agents you build in Labs 1–5.
+All three feed into the same output: clean Delta tables in `catalog.schema` that power the agents you build in Labs 1–5.
 
 **Next:** [Lab 1 — Information Extraction Agent](01-information-extraction-agent.md)

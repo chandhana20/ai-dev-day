@@ -22,7 +22,7 @@ You will use **AgentBricks → Key Information Extraction (KIE)** to:
 1. Go to **AI & BI → AgentBricks**.
 2. Click **Create Agent**.
 3. Select **Key Information Extraction**.
-4. Give it a name: `nvidia-10k-extractor`
+4. Give it a name: `10k-extractor`
 5. Click **Next**.
 
 ---
@@ -30,7 +30,7 @@ You will use **AgentBricks → Key Information Extraction (KIE)** to:
 ## Step 2 — Connect Your Data Source
 
 1. Under **Data Source**, select **Unity Catalog Volume**.
-2. Choose: **main → cp_nvidia → 10k**
+2. Choose: **your catalog → your schema → 10k**
 3. Click **Sample Documents** — AgentBricks will pull a few PDFs to test against.
 4. Click **Next**.
 
@@ -120,7 +120,7 @@ After making changes, click **Re-run on Samples** to see improvements.
 1. Click **Use** → **Create ETL Pipeline**.
 2. Name the pipeline: `10k-extraction-pipeline`
 3. Click **Start** — this will process all 10-K PDFs and write results to a Delta table.
-4. Once complete, go to **main → cp_nvidia** in the Catalog and find the new table.
+4. Once complete, go to **your catalog → your schema** in the Catalog and find the new table.
 5. Click **Sample Data** to verify the extracted fields look correct.
 
 > The pipeline creates a structured Delta table you can query with SQL or use in Genie (Lab 4).
@@ -133,7 +133,7 @@ Run this in the SQL Editor to confirm your pipeline worked:
 
 ```sql
 SELECT company_name, stock_symbol, fiscal_year_end, total_revenue, net_income
-FROM main.cp_nvidia.`10k-extraction-pipeline_responses_wide`
+FROM catalog.schema.`10k-extraction-pipeline_responses_wide`
 ORDER BY company_name;
 ```
 

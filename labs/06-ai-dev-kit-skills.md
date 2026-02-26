@@ -86,7 +86,7 @@ Instead of clicking through the UI manually, you can use the `agent-bricks` skil
 ```
 Using the agent-bricks skill, create a Knowledge Assistant called
 "mag7-10k-research" that answers questions about the 10-K filings
-stored in /Volumes/main/cp_nvidia/10k.
+stored in /Volumes/catalog/schema/10k.
 
 Set instructions to: "Only answer questions about Apple, Amazon,
 Google, Meta, Microsoft, NVIDIA, and Tesla annual filings."
@@ -102,8 +102,8 @@ Claude Code will call `create_or_update_ka` with the right parameters and return
 ```
 Using the databricks-genie skill, create a Genie Space called
 "mag7-financial-analytics" with these two tables:
-- main.cp_nvidia.ticker_data_mag7
-- main.cp_nvidia.10k-extraction-pipeline_responses_wide
+- catalog.schema.ticker_data_mag7
+- catalog.schema.10k-extraction-pipeline_responses_wide
 
 Add a certified query showing how to join them on
 ticker_data_mag7.company_name = kie_table.stock_symbol.
@@ -167,7 +167,7 @@ Using the aibi-dashboards skill, create an AI/BI dashboard called
 - A KPI tile showing average net income across all Mag7 companies
 - A table showing each company's long_term_debt vs cash_and_cash_equivalents
 
-Use main.cp_nvidia as the catalog/schema. Test all SQL before deploying.
+Use your catalog.schema as the catalog/schema. Test all SQL before deploying.
 ```
 
 ---
@@ -180,12 +180,12 @@ Schedule the full workflow end-to-end:
 ```
 Using the databricks-jobs skill, create a daily job called
 "finance-data-refresh" that:
-1. Runs the nvidia-finance-etl-pipeline (SDP pipeline from Lab 0b)
+1. Runs the finance-etl-pipeline (SDP pipeline from Lab 0b)
 2. After it completes, triggers the KIE extraction pipeline
 3. Sends a Slack notification to #finance-ai-team when done
 4. Runs daily at 6am UTC, Monday through Friday
 
-Use main.cp_nvidia for all table targets.
+Use your catalog.schema for all table targets.
 ```
 
 ---
@@ -197,30 +197,30 @@ Skills are just markdown files — you can write one for your firm's specific pa
 ### Create a custom skill:
 
 ```bash
-mkdir -p .claude/skills/nvidia-finance-patterns
+mkdir -p .claude/skills/finance-patterns
 ```
 
-Create `.claude/skills/nvidia-finance-patterns/SKILL.md`:
+Create `.claude/skills/finance-patterns/SKILL.md`:
 
 ```markdown
 ---
-name: nvidia-finance-patterns
-description: "Patterns and conventions for the NVIDIA Finance AI Build-a-Thon.
+name: finance-patterns
+description: "Patterns and conventions for the Finance AI Build-a-Thon.
 Use when working with Mag7 financial data, our volume structure, or naming conventions."
 ---
 
-# NVIDIA Finance Build-a-Thon Patterns
+# Finance AI Build-a-Thon Patterns
 
 ## Our Data Locations
 
 | Data Type | Volume Path | Parsed Table |
 |-----------|-------------|--------------|
-| 10-K filings | /Volumes/main/cp_nvidia/10k/ | main.cp_nvidia.10k_parsed |
-| 10-Q filings | /Volumes/main/cp_nvidia/10q/ | main.cp_nvidia.10q_parsed |
-| Call transcripts | /Volumes/main/cp_nvidia/call_transcripts/ | main.cp_nvidia.call_transcripts_parsed |
-| Earning releases | /Volumes/main/cp_nvidia/earning_releases/ | main.cp_nvidia.earning_releases_parsed |
-| Annual reports | /Volumes/main/cp_nvidia/annual_report/ | main.cp_nvidia.annual_reports_parsed |
-| Ticker data | N/A | main.cp_nvidia.ticker_data_mag7 |
+| 10-K filings | /Volumes/catalog/schema/10k/ | catalog.schema.10k_parsed |
+| 10-Q filings | /Volumes/catalog/schema/10q/ | catalog.schema.10q_parsed |
+| Call transcripts | /Volumes/catalog/schema/call_transcripts/ | catalog.schema.call_transcripts_parsed |
+| Earning releases | /Volumes/catalog/schema/earning_releases/ | catalog.schema.earning_releases_parsed |
+| Annual reports | /Volumes/catalog/schema/annual_report/ | catalog.schema.annual_reports_parsed |
+| Ticker data | N/A | catalog.schema.ticker_data_mag7 |
 
 ## Our Companies
 
@@ -265,16 +265,16 @@ Together:      →  Describe it once, get working Databricks infrastructure
 Using the spark-declarative-pipelines, agent-bricks, and
 databricks-genie skills:
 
-Build the complete NVIDIA Finance AI platform:
+Build the complete Finance AI platform:
 1. Create a Spark Declarative Pipeline to parse earning releases
-   from /Volumes/main/cp_nvidia/earning_releases/ into
-   main.cp_nvidia.silver_earning_releases
+   from /Volumes/catalog/schema/earning_releases/ into
+   catalog.schema.silver_earning_releases
 2. Create a Knowledge Assistant over the earning releases volume
 3. Create a Genie Space with ticker_data_mag7 and the silver table
 4. Create a Multi-Agent Supervisor combining both
 5. Schedule the SDP pipeline to run nightly
 
-Use catalog main, schema cp_nvidia.
+Use your catalog and schema.
 ```
 
 ---

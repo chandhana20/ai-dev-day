@@ -54,8 +54,8 @@ The two tables use different identifiers — `ticker_data_mag7` uses `company_na
 SELECT
   MAX(t.price_close)    AS max_close_price,
   MAX(k.long_term_debt) AS long_term_debt_millions
-FROM main.cp_nvidia.ticker_data_mag7 t
-JOIN main.cp_nvidia.`10k-extraction-pipeline_responses_wide` k
+FROM catalog.schema.ticker_data_mag7 t
+JOIN catalog.schema.`10k-extraction-pipeline_responses_wide` k
   ON t.company_name = k.stock_symbol
 WHERE t.company_name = 'MSFT'
   AND t.price_close IS NOT NULL

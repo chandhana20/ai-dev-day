@@ -1,6 +1,6 @@
 # AI Dev Day
 
-**Welcome to the NVIDIA AI Dev Day!**
+**Welcome to the AI Dev Day!**
 
 In this hands-on lab you will build a complete AI-powered financial analysis platform on Databricks using **AgentBricks** and **Genie**. No coding required for most steps — just follow the labs in order.
 
@@ -25,7 +25,7 @@ You are building tools for **Everest Capital**, a mid-sized investment bank whos
 
 ## The Data
 
-All datasets are pre-loaded in your workspace under `/Volumes/main/cp_nvidia/`.
+All datasets are pre-loaded in your workspace under `/Volumes/catalog/schema/`.
 
 | Folder | Contents |
 |--------|----------|
@@ -40,7 +40,7 @@ All datasets are pre-loaded in your workspace under `/Volumes/main/cp_nvidia/`.
 ## Prerequisites
 
 - Access to your Databricks workspace
-- Your workspace schema: `main.cp_nvidia`
+- Your workspace schema: `catalog.schema`
 - AgentBricks enabled (confirm with your lab facilitator)
 - **For Lab 0b & Lab 6:** [AI Dev Kit](https://github.com/databricks-solutions/ai-dev-kit) installed locally and Claude Code CLI (`npm install -g @anthropic-ai/claude-code`)
 

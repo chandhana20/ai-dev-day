@@ -33,7 +33,7 @@ You will add each document folder as a separate knowledge source. This lets you 
 
 **Add Knowledge Source 1 — 10-K Filings:**
 1. Click **Add Knowledge Source** → **Unity Catalog Volume**.
-2. Select: **main → cp_nvidia → 10k**
+2. Select: **your catalog → your schema → 10k**
 3. Set the name: `10K Filings`
 4. Add this description:
    > "Contains annual 10-K SEC filings for the Magnificent 7 companies (Apple, Amazon, Google, Meta, Microsoft, NVIDIA, Tesla) covering the past several years. Use this for annual financial metrics, risk factors, business overviews, and management discussions."
@@ -41,7 +41,7 @@ You will add each document folder as a separate knowledge source. This lets you 
 
 **Add Knowledge Source 2 — 10-Q Filings:**
 1. Click **Add Knowledge Source** → **Unity Catalog Volume**.
-2. Select: **main → cp_nvidia → 10q**
+2. Select: **your catalog → your schema → 10q**
 3. Set the name: `10Q Filings`
 4. Description:
    > "Contains quarterly 10-Q SEC filings for the Magnificent 7. Use for quarterly financial results, recent developments, and updated risk disclosures."
@@ -49,7 +49,7 @@ You will add each document folder as a separate knowledge source. This lets you 
 
 **Add Knowledge Source 3 — Earnings Releases:**
 1. Click **Add Knowledge Source** → **Unity Catalog Volume**.
-2. Select: **main → cp_nvidia → earning_releases**
+2. Select: **your catalog → your schema → earning_releases**
 3. Set the name: `Earnings Releases`
 4. Description:
    > "Contains earnings press releases, investor slides, and CFO commentary published by Magnificent 7 companies during quarterly earnings. Use for headline financial results, guidance, and investor-facing summaries."
@@ -57,7 +57,7 @@ You will add each document folder as a separate knowledge source. This lets you 
 
 **Add Knowledge Source 4 — Call Transcripts:**
 1. Click **Add Knowledge Source** → **Unity Catalog Volume**.
-2. Select: **main → cp_nvidia → call_transcripts**
+2. Select: **your catalog → your schema → call_transcripts**
 3. Set the name: `Earnings Call Transcripts`
 4. Description:
    > "Contains full earnings call transcripts for the Magnificent 7, including CEO/CFO prepared remarks and analyst Q&A. Use for management commentary, forward guidance tone, and competitive signals."
@@ -65,7 +65,7 @@ You will add each document folder as a separate knowledge source. This lets you 
 
 **Add Knowledge Source 5 — Annual Reports:**
 1. Click **Add Knowledge Source** → **Unity Catalog Volume**.
-2. Select: **main → cp_nvidia → annual_report**
+2. Select: **your catalog → your schema → annual_report**
 3. Set the name: `Annual Reports`
 4. Description:
    > "Contains full shareholder annual reports for the Magnificent 7. Use for narrative company strategy, letter to shareholders, and long-term outlook."
