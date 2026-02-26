@@ -14,6 +14,7 @@ The agent labs (Labs 1–5) all depend on structured Delta tables derived from t
 ## Architecture
 
 ```
+eg.
 /Volumes/main/cp_nvidia/
   ├── 10k/               (raw PDFs)
   ├── 10q/               (raw PDFs)
@@ -69,16 +70,7 @@ The Assistant will explain, modify, or generate code inline. Click **Accept** to
 ### Step 3 — Update the Volume Path
 
 Before running, update the volume path to match your workspace:
-
-1. Find the cell with:
-   ```python
-   volume_path = "/Volumes/cp_catalog/nvidia/csv"
-   ```
-2. Change it to:
-   ```python
-   volume_path = "/Volumes/main/cp_nvidia/10k"
-   ```
-3. Use **Databricks Assistant** to help: select the cell and ask:
+Use **Databricks Assistant** to help: select the cell and ask:
    > "Update this notebook to use the volume path /Volumes/main/cp_nvidia/10k and the schema main.cp_nvidia"
 
 ---
@@ -160,8 +152,8 @@ cd ai-dev-kit/ai-dev-project
 ```
 
 When prompted:
-- **Databricks host**: `https://e2-demo-west.cloud.databricks.com`
-- **Profile**: `e2-demo-west`
+- **Databricks host**: ``
+- **Profile**: ``
 
 This installs the skills and MCP server, then opens Claude Code pre-configured for Databricks.
 
