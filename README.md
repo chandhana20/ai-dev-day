@@ -1,65 +1,43 @@
-**Welcome to the AI Dev Day!**
+# AI Dev Day — Finance Build-a-Thon
 
-In this hands-on lab you will build a complete AI-powered financial analysis platform on Databricks using **AgentBricks**, **Genie** , Data Science Agent, Databricks Assistant & using Cursor/Claude-Code for AI development. Just follow the labs in order.
-
----
-
-## What You'll Build
-
-You are building tools for **Everest Capital**, a mid-sized investment bank whose analysts spend hours manually reading SEC filings, earnings calls, and press releases. By the end of this build-a-thon, you will have:
-
-| Lab | What You Build | Purpose |
-|-----|---------------|---------|
-| [Lab 0 — Setup](labs/00-setup.md) | Workspace & data access | Verify your environment |
-| [Lab 0b — Data Ingestion](labs/00b-data-ingestion.md) | ETL pipeline (PDFs → Delta tables) | Build with Databricks Assistant, Data Science Agent & AI Dev Kit |
-| [Lab 1 — Information Extraction Agent](labs/01-information-extraction-agent.md) | KIE Agent on 10-K filings | Auto-extract financial metrics from PDFs into Delta tables |
-| [Lab 2 — Custom LLM Agent](labs/02-custom-llm-agent.md) | Analyst Memo Generator | Turn earnings call transcripts into executive memos |
-| [Lab 3 — Knowledge Assistant](labs/03-knowledge-assistant.md) | Multi-doc RAG Agent | Answer research questions across all filings |
-| [Lab 4 — Genie Space](labs/04-genie-setup.md) | Natural Language SQL | Query stock + financial data conversationally |
-| [Lab 5 — Multi-Agent Orchestration](labs/05-multi-agent.md) | Supervisor Agent | Wire everything into a single client advisory copilot |
-| [Lab 6 — AI Dev Kit Skills](labs/06-ai-dev-kit-skills.md) | Skills-accelerated workflow | Use skills to automate and enrich every lab |
+Build a complete AI-powered financial analysis platform on Databricks using AgentBricks, Genie, Spark Declarative Pipelines, Databricks Assistant, Data Science Agent, and Cursor/Claude Code. Each lab is self-contained with step-by-step instructions.
 
 ---
 
-## The Data
+## Data
 
-All datasets are pre-loaded in your workspace under `/Volumes/catalog/schema/`.
+All datasets cover the **Magnificent 7** companies: Apple, Amazon, Alphabet, Meta, Microsoft, NVIDIA, and Tesla.
 
 | Folder | Contents |
 |--------|----------|
-| `10k/` | 10-K annual filings — Apple, Amazon, Google, Meta, Microsoft, NVIDIA, Tesla |
-| `10q/` | 10-Q quarterly filings |
-| `annual_report/` | Full annual reports |
-| `call_transcripts/` | Earnings call transcripts |
-| `earning_releases/` | Earnings press releases and slide decks |
+| `data/10K/` | Annual 10-K SEC filings |
+| `data/10Q/` | Quarterly 10-Q SEC filings |
+| `data/Annual Report/` | Full shareholder annual reports |
+| `data/Call Transcripts/` | Earnings call transcripts |
+| `data/Earning Releases/` | Earnings press releases and investor slide decks |
+| `data/ticker_data_for_genie.py` | Notebook to load historical stock price data into `catalog.schema.ticker_data_mag7` |
+
+Run `data/ticker_data_for_genie.py` and complete **Lab 0b** before starting the agent labs.
+
+---
+
+## Labs
+
+| Lab | Topic | What You Build |
+|-----|-------|---------------|
+| [Lab 0 — Setup](labs/00-setup.md) | Environment | Verify workspace access and data |
+| [Lab 0b — Data Ingestion](labs/00b-data-ingestion.md) | ETL | PDFs → Delta tables using Databricks Assistant, Data Science Agent, and AI Dev Kit |
+| [Lab 1 — Information Extraction](labs/01-information-extraction-agent.md) | AgentBricks KIE | Extract structured financial metrics from 10-K PDFs into Delta tables |
+| [Lab 2 — Custom LLM Agent](labs/02-custom-llm-agent.md) | AgentBricks CLLM | Generate analyst memos from earnings call transcripts |
+| [Lab 3 — Knowledge Assistant](labs/03-knowledge-assistant.md) | AgentBricks KA | Multi-document RAG over all five filing types |
+| [Lab 4 — Genie Space](labs/04-genie-setup.md) | Genie | Natural language SQL over stock price and financial data |
+| [Lab 5 — Multi-Agent Supervisor](labs/05-multi-agent.md) | AgentBricks MAS | Orchestrate Genie + Knowledge Assistant into a single advisory copilot |
+| [Lab 6 — AI Dev Kit Skills](labs/06-ai-dev-kit-skills.md) | AI Dev Kit | Use skills to accelerate and automate every lab |
 
 ---
 
 ## Prerequisites
 
-- Access to your Databricks workspace
-- Your workspace schema: `catalog.schema`
-- AgentBricks enabled (confirm with your lab facilitator)
-- **For Lab 0b & Lab 6:** [AI Dev Kit](https://github.com/databricks-solutions/ai-dev-kit) installed locally and Claude Code CLI (`npm install -g @anthropic-ai/claude-code`)
-
----
-
-## Lab Order
-
-Follow the labs sequentially. Each lab builds on the previous one.
-
-```
-Lab 0 → Lab 0b → Lab 1 → Lab 2 → Lab 3 → Lab 4 → Lab 5 → Lab 6
-Setup   Ingest    KIE     CLLM     KA     Genie    MAS    Skills
-```
-
-**Time estimate per lab:** ~20–30 minutes each
-
-> **Lab 0b** is where the raw PDFs become queryable Delta tables. All agent labs depend on it.
-> **Lab 6** can be done alongside any other lab — use it to accelerate whatever you're building.
-
----
-
-## Support
-
-If you get stuck, ask your lab facilitator or refer to the [Databricks AgentBricks docs](https://docs.databricks.com/en/generative-ai/agent-bricks/index.html).
+- Databricks workspace with AgentBricks enabled
+- Unity Catalog with a catalog and schema you can write to
+- For Labs 0b and 6: [AI Dev Kit](https://github.com/databricks-solutions/ai-dev-kit) and [Claude Code](https://github.com/anthropics/claude-code) installed locally

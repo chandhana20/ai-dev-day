@@ -106,7 +106,7 @@ Using the databricks-genie skill, create a Genie Space called
 - catalog.schema.10k-extraction-pipeline_responses_wide
 
 Add a certified query showing how to join them on
-ticker_data_mag7.company_name = kie_table.stock_symbol.
+catalog.schema.ticker_data_mag7.company_name = kie_table.stock_symbol.
 
 Add these sample questions:
 - "What was NVIDIA's highest stock price in 2024?"
@@ -163,7 +163,7 @@ Turn your extracted data into an executive dashboard:
 Using the aibi-dashboards skill, create an AI/BI dashboard called
 "Mag7 Financial Overview" with:
 - A bar chart of total_revenue by company (from the KIE responses table)
-- A line chart of NVDA stock price over time (from ticker_data_mag7)
+- A line chart of NVDA stock price over time (from catalog.schema.ticker_data_mag7)
 - A KPI tile showing average net income across all Mag7 companies
 - A table showing each company's long_term_debt vs cash_and_cash_equivalents
 
@@ -234,7 +234,7 @@ The Magnificent 7: AAPL, AMZN, GOOG/GOOGL, META, MSFT, NVDA, TSLA
 
 ## Join Pattern for Ticker + KIE Data
 
-Always join on: ticker_data_mag7.company_name = kie_table.stock_symbol
+Always join on: catalog.schema.ticker_data_mag7.company_name = kie_table.stock_symbol
 
 ## Standard Delta Table Options
 
@@ -270,7 +270,7 @@ Build the complete Finance AI platform:
    from /Volumes/catalog/schema/earning_releases/ into
    catalog.schema.silver_earning_releases
 2. Create a Knowledge Assistant over the earning releases volume
-3. Create a Genie Space with ticker_data_mag7 and the silver table
+3. Create a Genie Space with catalog.schema.ticker_data_mag7 and the silver table
 4. Create a Multi-Agent Supervisor combining both
 5. Schedule the SDP pipeline to run nightly
 

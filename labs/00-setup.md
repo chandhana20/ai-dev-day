@@ -32,9 +32,9 @@
 
 click the **Tables** tab and confirm these tables exist:
 
-- `ticker_data_mag7`
+- `catalog.schema.ticker_data_mag7`
 
-Click `ticker_data_mag7` → **Sample Data** to make sure it has rows.
+Click `catalog.schema.ticker_data_mag7` → **Sample Data** to make sure it has rows.
 
 > These tables were pre-built for you from the raw PDFs. Lab 1 will show you how to create your own.
 

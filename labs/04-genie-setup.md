@@ -32,7 +32,7 @@ Add both of the following tables to this Genie space:
 
 **Table 1 — Stock Ticker Data:**
 1. Click **Add Table**.
-2. Select: ticker_data_mag7
+2. Select: catalog.schema.ticker_data_mag7
 3. This table contains daily stock prices (open, close, volume, date) for the Mag 7.
 4. Click **Add**.
 
@@ -46,7 +46,7 @@ Add both of the following tables to this Genie space:
 
 ## Step 3 — Teach Genie How to Join the Tables
 
-The two tables use different identifiers — `ticker_data_mag7` uses `company_name` (e.g., `MSFT`) while the KIE table uses `stock_symbol`. You need to tell Genie the right way to join them.
+The two tables use different identifiers — `catalog.schema.ticker_data_mag7` uses `company_name` (e.g., `MSFT`) while the KIE table uses `stock_symbol`. You need to tell Genie the right way to join them.
 
 1. In the Genie chat box, type or paste this SQL query:
 
@@ -73,7 +73,7 @@ WHERE t.company_name = 'MSFT'
 
 Help Genie understand what each table contains:
 
-1. Click on **ticker_data_mag7** in the tables panel.
+1. Click on **catalog.schema.ticker_data_mag7** in the tables panel.
 2. Add description:
    > "Daily stock market data for the Magnificent 7 companies. Contains company_name (ticker symbol like AAPL, NVDA), date, price_open, price_close, and trading volume. Use for stock performance, price trends, and trading analysis."
 3. Save.
@@ -141,8 +141,8 @@ You can add free-text instructions to guide Genie's behavior:
 This Genie space focuses on the Magnificent 7 companies: Apple (AAPL), Amazon (AMZN),
 Google/Alphabet (GOOG/GOOGL), Meta (META), Microsoft (MSFT), NVIDIA (NVDA), Tesla (TSLA).
 
-When joining ticker_data_mag7 and the KIE responses table, always join on:
-  ticker_data_mag7.company_name = kie_table.stock_symbol
+When joining catalog.schema.ticker_data_mag7 and the KIE responses table, always join on:
+  catalog.schema.ticker_data_mag7.company_name = kie_table.stock_symbol
 
 Financial figures from the KIE table are in USD millions.
 Always clarify units in your responses.
