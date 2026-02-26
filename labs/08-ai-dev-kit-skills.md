@@ -86,7 +86,7 @@ Instead of clicking through the UI manually, you can use the `agent-bricks` skil
 ```
 Using the agent-bricks skill, create a Knowledge Assistant called
 "mag7-10k-research" that answers questions about the 10-K filings
-stored in /Volumes/catalog/schema/10k.
+stored in /Volumes/main/fins_agent_bricks_demo/magnificent_seven_unstructured_data/10k/.
 
 Set instructions to: "Only answer questions about Apple, Amazon,
 Google, Meta, Microsoft, NVIDIA, and Tesla annual filings."
@@ -102,16 +102,10 @@ Claude Code will call `create_or_update_ka` with the right parameters and return
 ```
 Using the databricks-genie skill, create a Genie Space called
 "mag7-financial-analytics" with these two tables:
-- catalog.schema.ticker_data_mag7
-- catalog.schema.10k-extraction-pipeline_responses_wide
-
-Add a certified query showing how to join them on
-catalog.schema.ticker_data_mag7.company_name = kie_table.stock_symbol.
+- main.fins_agent_bricks_demo.ticker_data_mag7
 
 Add these sample questions:
 - "What was NVIDIA's highest stock price in 2024?"
-- "Which company has the highest net income?"
-- "Show me Microsoft's revenue trend over the past 3 years"
 ```
 
 ---
