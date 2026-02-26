@@ -118,12 +118,12 @@ Using the agent-bricks skill, create a Multi-Agent Supervisor called
 "mag7-client-advisory-copilot" with:
 
 Agent 1 - Financial Data Analyst:
-  genie_space_id: [your genie space ID from Lab 4]
+  genie_space_id: 01f112c34d0e1e73ae031cc552eb2a88
   description: "Use for quantitative questions: stock prices,
   financial metrics, comparisons, numerical lookups"
 
 Agent 2 - Financial Research Analyst:
-  ka_tile_id: [your KA tile ID from Lab 3]
+  ka_tile_id: 23b6c7e1-b68b-49ae-a397-2b98c5989a5d 
   description: "Use for qualitative questions: management commentary,
   risk factors, earnings call summaries, strategic priorities"
 
