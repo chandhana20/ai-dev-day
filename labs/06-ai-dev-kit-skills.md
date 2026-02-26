@@ -1,4 +1,4 @@
-# Lab 6 — AI Dev Kit Skills: Accelerate Every Step
+# BONUS Lab 6 — AI Dev Kit Skills: Accelerate Every Step
 
 **Time:** ~20 minutes
 **Goal:** Learn how to use the AI Dev Kit's **skills** system to make your AI coding assistant an expert Databricks developer — so you can build, extend, and debug the entire finance platform faster.
