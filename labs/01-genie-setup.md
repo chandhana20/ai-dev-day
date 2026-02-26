@@ -48,18 +48,16 @@ Add both of the following tables to this Genie space:
 
 The two tables use different identifiers — `catalog.schema.ticker_data_mag7` uses `company_name` (e.g., `MSFT`) while the KIE table uses `stock_symbol`. You need to tell Genie the right way to join them.
 
-1. In the Genie chat box, type or paste this SQL query:
-
+1. In the Genie , add SQL query as instruction:
+To calculate max close price 
 ```sql
 SELECT
-  MAX(t.price_close)    AS max_close_price,
-  MAX(k.long_term_debt) AS long_term_debt_millions
-FROM catalog.schema.ticker_data_mag7 t
-JOIN catalog.schema.`10k-extraction-pipeline_responses_wide` k
+  MAX(t.price_close)    AS max_close_price
+FROM main.fins_agent_bricks_demo.ticker_data_mag7 t
+JOIN main.fins_agent_bricks_demo.`kie-87141233-endpoint_responses_wide` k
   ON t.company_name = k.stock_symbol
-WHERE t.company_name = 'MSFT'
-  AND t.price_close IS NOT NULL
-  AND k.long_term_debt IS NOT NULL;
+WHERE t.company_name = 'AAPL'
+  AND t.price_close IS NOT NULL;
 ```
 
 2. Run it and confirm it returns results.
@@ -90,45 +88,17 @@ Help Genie understand what each table contains:
 Try asking Genie these questions:
 
 **Stock performance:**
-> "What was NVIDIA's highest closing price in 2024?"
-
-> "Show me the trading volume for all Mag 7 companies last month."
-
-> "Which company had the biggest single-day price drop this year?"
-
-**Financial fundamentals:**
-> "Which Mag 7 company has the highest net income?"
-
-> "Compare R&D spending across all companies."
-
-> "What is Tesla's long-term debt?"
-
-**Cross-table (stock + fundamentals):**
-> "What was Microsoft's max stock price and what is their total revenue?"
-
-> "Show me companies with revenue over $200 billion and their current stock price."
-
-> "Which company has the best net income relative to their market cap?"
+> "What was NVIDIA's highest stock price?"
+> "What was Microsoft's max stock price"
+> I'm building a portfolio. Which MAG7 stock had the most consistent growth and what was its best month?
+>  Which MAG7 stock had the highest average closing price in 2025?
 
 For each answer, check that Genie:
 - Returns a SQL query it used (visible in the response)
 - Shows a table or chart
 - Used the correct join when both tables were needed
 
----
 
-## Step 6 — Add Curated Questions (Optional)
-
-Pre-load the Genie space with questions your team will frequently ask:
-
-1. Click **Curated Questions** → **Add Question**.
-2. Add 3–5 questions relevant to your firm's workflow:
-   - "What is NVIDIA's revenue growth year over year?"
-   - "Show me all companies with long-term debt above $50 billion"
-   - "What is the R&D spend as a percentage of revenue for each company?"
-3. These appear as suggested questions when users open the Genie space.
-
----
 
 ## Step 7 — (Optional) Add Genie Instructions
 
@@ -140,9 +110,6 @@ You can add free-text instructions to guide Genie's behavior:
 ```
 This Genie space focuses on the Magnificent 7 companies: Apple (AAPL), Amazon (AMZN),
 Google/Alphabet (GOOG/GOOGL), Meta (META), Microsoft (MSFT), NVIDIA (NVDA), Tesla (TSLA).
-
-When joining catalog.schema.ticker_data_mag7 and the KIE responses table, always join on:
-  catalog.schema.ticker_data_mag7.company_name = kie_table.stock_symbol
 
 Financial figures from the KIE table are in USD millions.
 Always clarify units in your responses.
