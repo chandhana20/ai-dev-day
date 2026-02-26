@@ -2,7 +2,7 @@
 
 **Welcome to the AI Dev Day!**
 
-In this hands-on lab you will build a complete AI-powered financial analysis platform on Databricks using **AgentBricks** and **Genie**. No coding required for most steps — just follow the labs in order.
+In this hands-on lab you will build a complete AI-powered financial analysis platform on Databricks using **AgentBricks**, **Genie** & all the other ai tools. Just follow the labs in order.
 
 ---
 
