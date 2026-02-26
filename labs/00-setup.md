@@ -42,7 +42,7 @@ Click `catalog.schema.ticker_data_mag7` → **Sample Data** to make sure it has 
 
 ## Step 4 — Open AgentBricks
 
-1. In the left sidebar, click **AI & BI** → **AgentBricks**.
+1. In the left sidebar, click **Agents**.
 2. You should see the AgentBricks home page.
 3. If you see a "Get Started" or "Create Agent" button, you are ready.
 
