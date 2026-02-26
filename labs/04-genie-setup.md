@@ -32,13 +32,13 @@ Add both of the following tables to this Genie space:
 
 **Table 1 — Stock Ticker Data:**
 1. Click **Add Table**.
-2. Select: **main → cp_nvidia → ticker_data_mag7**
+2. Select: ticker_data_mag7
 3. This table contains daily stock prices (open, close, volume, date) for the Mag 7.
 4. Click **Add**.
 
 **Table 2 — Extracted 10-K Financial Data:**
 1. Click **Add Table**.
-2. Select: **main → cp_nvidia → [your KIE pipeline table from Lab 1]**
+2. Select: [your KIE pipeline table from Lab 1]**
    - This is the wide table created by the extraction pipeline (e.g., `10k-extraction-pipeline_responses_wide`)
 3. Click **Add**.
 
