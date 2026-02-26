@@ -1,7 +1,7 @@
-# Lab 5 — Multi-Agent Orchestration (Client Advisory Copilot)
+# Lab 7 — Multi-Agent Orchestration
 
 **Time:** ~20 minutes
-**Goal:** Wire together your Genie space (quantitative analysis) and Knowledge Assistant (qualitative analysis) into a single supervisor agent — an AI copilot that answers complex financial questions requiring both structured data and document research.
+**Goal:** Wire together your Genie space (quantitative analysis) and Knowledge Assistant (qualitative analysis) into a single supervisor agent that answers complex financial questions requiring both structured data and document research.
 
 **Business Problem:** A relationship manager asks: *"Should I be concerned about Microsoft's debt levels given their recent earnings call guidance?"* — answering this requires SQL queries AND document retrieval. One agent can't do both alone.
 
@@ -49,7 +49,7 @@ Before starting this lab, confirm you have:
 1. Go to **AI & BI → AgentBricks**.
 2. Click **Create Agent**.
 3. Select **Multi-Agent Supervisor**.
-4. Name it: `mag7-client-advisory-copilot`
+4. Name it: `mag7-advisory-supervisor`
 5. Click **Next**.
 
 ---
@@ -171,7 +171,7 @@ You have built a full AI-powered financial intelligence platform:
 | **Custom LLM Agent** | Generates analyst memos from earnings call transcripts |
 | **Knowledge Assistant** | Answers research questions across all filings with citations |
 | **Genie Space** | Natural language SQL over stock + financial data |
-| **Multi-Agent Supervisor** | Single copilot that routes and synthesizes across all agents |
+| **Multi-Agent Supervisor** | Routes and synthesizes across Genie and Knowledge Assistant |
 
 ---
 

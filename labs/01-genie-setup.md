@@ -1,4 +1,4 @@
-# Lab 4 — Genie Space (Natural Language SQL)
+# Lab 1 — Genie Space (Natural Language SQL)
 
 **Time:** ~20 minutes
 **Goal:** Build a Genie Space that lets anyone ask quantitative financial questions in plain English — combining live stock ticker data with the structured metrics you extracted in Lab 1.
@@ -159,4 +159,4 @@ You built a Genie space that:
 - Answers plain English financial questions with SQL
 - Knows how to correctly join both data sources
 
-**Next:** [Lab 5 — Multi-Agent Orchestration](05-multi-agent.md)
+**Next:** [Lab 2 — Apps](02-apps.md)

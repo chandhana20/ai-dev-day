@@ -1,4 +1,4 @@
-# Lab 1 — Information Extraction Agent (KIE)
+# Lab 4 — Information Extraction (KIE)
 
 **Time:** ~25 minutes
 **Goal:** Build an AI agent that automatically extracts structured financial metrics (revenue, net income, debt ratios, etc.) from 10-K SEC filings and stores them in a Delta table.

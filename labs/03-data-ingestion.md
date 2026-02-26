@@ -1,4 +1,4 @@
-# Lab 0b — Data Ingestion: From PDFs to Delta Tables
+# Lab 3 — Data Ingestion
 
 **Time:** ~30 minutes
 **Goal:** Land the raw PDF data into Delta tables that the AgentBricks labs depend on. You will do this three ways: (1) run the pre-built notebook using **Databricks Assistant** to understand and extend it, (2) use the **Data Science Agent** to generate code, and (3) use the **AI Dev Kit** to scaffold a production-grade ETL pipeline with Spark Declarative Pipelines.
@@ -258,4 +258,4 @@ You now have three tools in your toolkit for data ingestion:
 
 All three feed into the same output: clean Delta tables in `catalog.schema` that power the agents you build in Labs 1–5.
 
-**Next:** [Lab 1 — Information Extraction Agent](01-information-extraction-agent.md)
+**Next:** [Lab 4 — Information Extraction](04-information-extraction-agent.md)

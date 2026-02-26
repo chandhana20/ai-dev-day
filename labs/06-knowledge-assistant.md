@@ -1,4 +1,4 @@
-# Lab 3 — Knowledge Assistant (Multi-Document RAG)
+# Lab 6 — Knowledge Assistant (Multi-Document RAG)
 
 **Time:** ~25 minutes
 **Goal:** Build a retrieval-augmented AI assistant that can answer research questions across all financial documents — 10-Ks, 10-Qs, annual reports, earnings releases, and call transcripts — simultaneously.

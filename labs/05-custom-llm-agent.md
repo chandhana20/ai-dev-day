@@ -1,4 +1,4 @@
-# Lab 2 — Custom LLM Agent (Earnings Call Analyst Memo)
+# Lab 5 — Custom LLM Agent (Earnings Call Analyst Memo)
 
 **Time:** ~25 minutes
 **Goal:** Build an AI agent that reads earnings call transcripts and automatically generates structured analyst memos — including an executive summary, financial scorecard, and red/green flags.
