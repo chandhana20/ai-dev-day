@@ -9,7 +9,7 @@
 
 ## Overview
 
-You will use **AgentBricks → Knowledge Assistant (KA)** to:
+You will use  Knowledge Assistant (KA)** to:
 1. Create a multi-source knowledge assistant
 2. Connect all five document volumes as separate knowledge bases
 3. Configure the agent to know when to use each source
@@ -19,7 +19,7 @@ You will use **AgentBricks → Knowledge Assistant (KA)** to:
 
 ## Step 1 — Create a Knowledge Assistant
 
-1. Go to **AI & BI → AgentBricks**.
+1. Go to **AgentBricks**.
 2. Click **Create Agent**.
 3. Select **Knowledge Assistant**.
 4. Name it: `mag7-financial-research-assistant`
