@@ -46,7 +46,7 @@ Before starting this lab, confirm you have:
 
 ## Step 1 — Create a Multi-Agent Supervisor
 
-1. Go to **AI & BI → AgentBricks**.
+1. Go to **AgentBricks**.
 2. Click **Create Agent**.
 3. Select **Multi-Agent Supervisor**.
 4. Name it: `mag7-advisory-supervisor`
