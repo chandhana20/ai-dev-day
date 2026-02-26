@@ -1,6 +1,6 @@
-# AI Dev Day — Finance Build-a-Thon
+# AI Dev Day
 
-**Welcome to the NVIDIA AI Dev Day Build-a-Thon!**
+**Welcome to the NVIDIA AI Dev Day!**
 
 In this hands-on lab you will build a complete AI-powered financial analysis platform on Databricks using **AgentBricks** and **Genie**. No coding required for most steps — just follow the labs in order.
 
@@ -33,18 +33,11 @@ All datasets are pre-loaded in your workspace under `/Volumes/main/cp_nvidia/`.
 | `call_transcripts/` | Earnings call transcripts |
 | `earning_releases/` | Earnings press releases and slide decks |
 
-**Delta tables** (pre-built for you):
-- `main.cp_nvidia.10k_parsed` — extracted text from 10-K PDFs
-- `main.cp_nvidia.call_transcripts_parsed` — extracted text from call transcripts
-- `main.cp_nvidia.ticker_data_mag7` — daily stock price data for the Magnificent 7
-
 ---
 
 ## Prerequisites
 
-- Access to `https://e2-demo-west.cloud.databricks.com/`
-- Your workspace: `main.cp_nvidia` schema
-- AgentBricks enabled (confirm with your lab facilitator)
+- Access to databricks workspace
 
 ---
 
