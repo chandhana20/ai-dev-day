@@ -144,4 +144,4 @@ You deployed a production-ready data app that:
 - Handles authentication automatically via the Databricks Apps runtime
 - Requires no infrastructure setup or Kubernetes knowledge
 
-**Next:** [Lab 3 — Data Ingestion](03-data-ingestion.md)
+**Next:** [Lab 5 — Custom LLM Agent](05-custom-llm-agent.md)

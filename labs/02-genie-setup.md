@@ -126,4 +126,4 @@ You built a Genie space that:
 - Answers plain English financial questions with SQL
 - Knows how to correctly join both data sources
 
-**Next:** [Lab 2 — Apps](02-apps.md)
+**Next:** [Lab 3 — Data Ingestion](03-data-ingestion.md)

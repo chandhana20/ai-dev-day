@@ -26,10 +26,10 @@ The `ticker_data_mag7` table is pre-loaded. Complete **Lab 3** before starting t
 | Lab | Topic | What You Build |
 |-----|-------|---------------|
 | [Lab 0 — Setup](labs/00-setup.md) | Environment | Verify workspace access and data |
-| [Lab 1 — Genie Space](labs/01-genie-setup.md) | Genie | Natural language SQL over MAG-7 stock price and financial data |
-| [Lab 2 — Apps](labs/02-apps.md) | Databricks Apps | Deploy the MAG-7 Ticker Explorer as a Databricks App |
+| [Lab 1 — Information Extraction](labs/01-information-extraction-agent.md) | AgentBricks | Extract structured financial data from SEC filings |
+| [Lab 2 — Genie Space](labs/02-genie-setup.md) | Genie | Natural language SQL over MAG-7 stock price and financial data |
 | [Lab 3 — Data Ingestion](labs/03-data-ingestion.md) | ETL | Load financial data into Unity Catalog Delta tables using Databricks Assistant, Data Science Agent, and AI Dev Kit |
-| [Lab 4 — Information Extraction](labs/04-information-extraction-agent.md) | AgentBricks | Extract structured financial data from SEC filings |
+| [Lab 4 — Apps](labs/04-apps.md) | Databricks Apps | Deploy the MAG-7 Ticker Explorer as a Databricks App |
 | [Lab 5 — Custom LLM Agent](labs/05-custom-llm-agent.md) | AgentBricks | Generate financial analysis from earnings call transcripts |
 | [Lab 6 — Knowledge Assistant](labs/06-knowledge-assistant.md) | AgentBricks | Multi-document search across all five filing types |
 | [Lab 7 — Multi-Agent Supervisor](labs/07-multi-agent.md) | AgentBricks | Orchestrate Genie and Knowledge Assistant to answer complex financial questions |

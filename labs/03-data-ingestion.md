@@ -258,4 +258,4 @@ You now have three tools in your toolkit for data ingestion:
 
 All three feed into the same output: clean Delta tables in `catalog.schema` that power the agents you build in Labs 1–5.
 
-**Next:** [Lab 4 — Information Extraction](04-information-extraction-agent.md)
+**Next:** [Lab 4 — Apps](04-apps.md)

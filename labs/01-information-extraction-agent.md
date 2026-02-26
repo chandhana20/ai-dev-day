@@ -148,4 +148,4 @@ You built an agent that:
 - Extracts 15+ structured financial fields per document
 - Stores results in a queryable Delta table
 
-**Next:** [Lab 2 — Custom LLM Agent for Earnings Call Analysis](02-custom-llm-agent.md)
+**Next:** [Lab 2 — Genie Space](02-genie-setup.md)
