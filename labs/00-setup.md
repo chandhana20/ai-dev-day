@@ -69,5 +69,3 @@ You should see NVIDIA stock price rows.
 ---
 
 ## You're Ready!
-
-Once all steps above pass, move on to **[Lab 1 — Information Extraction Agent](01-information-extraction-agent.md)**.
