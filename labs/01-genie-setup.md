@@ -19,7 +19,7 @@ You will use **Databricks Genie** to:
 
 ## Step 1 — Navigate to Genie
 
-1. In the left sidebar, click **AI & BI → Genie**.
+1. In the left sidebar, click → Genie**.
 2. Click **Create Genie Space**.
 3. Name it: `mag7-financial-analytics`
 4. Click **Create**.
