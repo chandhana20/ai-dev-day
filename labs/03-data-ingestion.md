@@ -1,261 +1,322 @@
 # Lab 3 — Data Ingestion
 
 **Time:** ~30 minutes
-**Goal:** Land the raw PDF data into Delta tables that the AgentBricks labs depend on. You will do this three ways: (1) run the pre-built notebook using **Databricks Assistant** to understand and extend it, (2) use the **Data Science Agent** to generate code, and (3) use the **AI Dev Kit** to scaffold a production-grade ETL pipeline with Spark Declarative Pipelines.
+**Goal:** Land raw finance data into Delta tables using five different ingestion methods — from manual CSV uploads to AI-assisted pipeline generation.
 
 ---
 
-## Why This Lab Matters
+## Overview
 
-The agent labs (Labs 1–5) all depend on structured Delta tables derived from the raw PDFs. This lab is where those tables get created. You'll also learn how to use Databricks AI tools to write data engineering code yourself — so you can adapt this for your own firm's data.
+| Method | Best For | Skill Level |
+|--------|----------|-------------|
+| **Manual Upload → Auto Loader** | CSVs, Excel exports, one-time loads | Beginner |
+| **Lakeflow Connect (SharePoint/GDrive)** | Live SharePoint/OneDrive data | Intermediate |
+| **AI Dev Kit + Cursor** | Building reusable pipelines fast | Advanced |
+| **Databricks Assistant for Data Cleaning** | Interactive data cleaning and transformation | Beginner |
+| **Extend the Assistant with Agent Skills** | Domain-specific workflows, reusable scripts | Intermediate |
 
----
+## Data We're Ingesting
 
-## Architecture
-
-```
-/Volumes/catalog/schema/
-  ├── 10k/               (raw PDFs)
-  ├── 10q/               (raw PDFs)
-  ├── call_transcripts/  (raw PDFs)
-  ├── earning_releases/  (raw PDFs)
-  └── annual_report/     (raw PDFs)
-         │
-         ▼
-  [ETL Pipeline — this lab]
-         │
-         ▼
-  catalog.schema.10k_parsed          ← text extracted from 10-Ks
-  catalog.schema.call_transcripts_parsed  ← text from transcripts
-  catalog.schema.ticker_data_mag7    ← stock price time series
-```
+- `pnl_raw.csv` — P&L across segments and regions
+- `budget_vs_actual_raw.csv` — Cost center budgets
+- `treasury_loans_raw.csv` — Loan and facility data
+- `customer_product_dim_raw.csv` — Customer/product master
+- `purchase_requests_emails.txt` — Unstructured email data
+- `earnings_call_transcript_excerpt.txt` — Earnings call text
 
 ---
 
-## Part A — Run the Pre-Built Notebook with Databricks Assistant
+## Step 0 — Setup: Create Catalog, Schema, and Volume
 
-### Step 1 — Import the Notebook
-
-1. In the left sidebar, click **Workspace**.
-2. Navigate to your user folder: **Workspace → Users → [your email]**
-3. Click the **⋮** menu → **Import**.
-4. Select **URL** and paste:
-   ```
-   https://raw.githubusercontent.com/chandhana-padmanabhan_data/ai-dev-day/main/notebooks/01_data_ingestion.py
-   ```
-5. Click **Import**. The notebook opens automatically.
-
----
-
-### Step 2 — Explore with Databricks Assistant
-
-Databricks Assistant is built into every notebook. Click the **Assistant** panel (sparkle ✨ icon in the top right of any cell).
-
-Try these prompts in the Assistant to understand the notebook before running it:
-
-> "Explain what this cell does"
-*(Select any cell first, then ask)*
-
-> "What does Auto Loader do differently from a regular spark.read?"
-
-> "How would I modify this to also ingest Excel files from the volume?"
-
-> "Add error handling to the CSV ingestion cell that logs bad rows to a separate table"
-
-The Assistant will explain, modify, or generate code inline. Click **Accept** to apply changes to the cell.
-
----
-
-### Step 3 — Update the Volume Path
-
-Before running, update the volume path to match your workspace:
-
-1. Find the cell with:
-   ```python
-   volume_path = "/Volumes/catalog/schema/raw"
-   ```
-2. Change it to match your volume path:
-   ```python
-   volume_path = "/Volumes/catalog/schema/10k"
-   ```
-3. Use **Databricks Assistant** to help: select the cell and ask:
-   > "Update this notebook to use the volume path /Volumes/catalog/schema/10k and the schema catalog.schema"
-
----
-
-### Step 4 — Run the Notebook
-
-1. At the top, attach to a cluster (use **Serverless** if available, otherwise select any running cluster).
-2. Click **Run All** (or `Shift+Enter` cell by cell to follow along).
-3. The notebook will:
-   - Create the `catalog.schema` schema if it doesn't exist
-   - Read PDFs from the volume
-   - Extract text content into rows
-   - Write parsed tables to Unity Catalog
-
-4. After completion, verify in the Catalog:
-   - Go to **Catalog → your catalog → your schema → Tables**
-   - Confirm `10k_parsed` and `call_transcripts_parsed` appear
-
----
-
-## Part B — Use the Data Science Agent to Extend the Pipeline
-
-The Databricks **Data Science Agent** can write full notebook sections from a plain English description.
-
-### Step 1 — Open the Data Science Agent
-
-1. In your notebook, click **AI** in the toolbar → **Data Science Agent**.
-2. The agent panel opens on the right.
-
-### Step 2 — Ask It to Generate a New Section
-
-Type this prompt:
-
-> "Write a new notebook section that reads all PDF files from /Volumes/catalog/schema/earning_releases, extracts the text from each PDF using pdfplumber or PyMuPDF, creates a Spark DataFrame with columns: filename, company_name (extracted from filename), doc_type='earning_release', text_content, word_count, and ingested_at. Write the result to catalog.schema.earning_releases_parsed."
-
-The agent will:
-- Generate the full PySpark code
-- Explain what each section does
-- Offer to insert it directly into your notebook
-
-Click **Insert into Notebook**, then run the new cell.
-
-### Step 3 — Iterate with the Agent
-
-After running, ask follow-up questions:
-
-> "The company_name extraction didn't work for files like 'AMZN-Q1-2025-Earnings-Release.pdf'. Fix the regex to extract the ticker symbol from the start of the filename."
-
-> "Add a data quality check that flags any rows where word_count is less than 100."
-
-This is the core of AI-assisted data engineering: describe what you want, review the code, run it, and iterate.
-
----
-
-## Part C — AI Dev Kit: Build a Production ETL Pipeline
-
-The **AI Dev Kit** gives your AI coding assistant (Claude Code, Cursor, etc.) deep knowledge of Databricks patterns through **skills**. Here you'll use it to scaffold a proper Spark Declarative Pipeline (the modern replacement for Delta Live Tables).
-
-### What the AI Dev Kit Does
-
-```
-Your prompt (plain English)
-        +
-AI Dev Kit Skill (Databricks best practices)
-        ↓
-Production-ready pipeline code
-        ↓
-Auto-deployed to your workspace
-```
-
-### Step 1 — Set Up the AI Dev Kit
-
-Open a **Terminal** on your laptop (not inside Databricks) and run:
-
-```bash
-git clone https://github.com/databricks-solutions/ai-dev-kit.git
-cd ai-dev-kit/ai-dev-project
-./setup.sh
-```
-
-When prompted:
-- **Databricks host**: ``
-- **Profile**: ``
-
-This installs the skills and MCP server, then opens Claude Code pre-configured for Databricks.
-
-### Step 2 — Install the Spark Declarative Pipelines Skill
-
-If you already have Claude Code open without the full setup:
-
-```bash
-cd ai-dev-kit
-./databricks-skills/install_skills.sh
-```
-
-This copies all skills into `.claude/skills/` — Claude Code loads them automatically.
-
-### Step 3 — Prompt Claude Code to Build Your Pipeline
-
-With Claude Code open (run `claude` in the ai-dev-kit project directory), type:
-
-```
-Build a Spark Declarative Pipeline for the Finance AI Build-a-Thon that:
-
-Bronze layer:
-- Reads all PDF files from /Volumes/catalog/schema/10k/ as binary files
-- Extracts file metadata (filename, file_size, ingested_at)
-- Writes to catalog.schema.bronze_10k_files
-
-Silver layer:
-- Reads bronze_10k_files
-- Extracts text content from each PDF using pdf parsing
-- Parses the company ticker from the filename
-- Adds doc_type = '10k'
-- Applies a data quality expectation: drop rows where text_content is NULL
-- Writes to catalog.schema.silver_10k_parsed
-
-Gold layer:
-- Reads silver_10k_parsed
-- Computes word_count, unique_words, and estimated_pages per document
-- Groups by company ticker with document count
-- Writes to catalog.schema.gold_10k_summary
-
-Use the catalog and schema you are using. Use serverless compute.
-```
-
-Claude Code will:
-1. Load the `spark-declarative-pipelines` skill automatically
-2. Initialize a proper pipeline project with Asset Bundles
-3. Write the bronze/silver/gold SQL/Python files
-4. Upload them to your workspace
-5. Create and run the pipeline
-6. Verify the output tables
-
-### Step 4 — Watch the Pipeline Run
-
-1. In Databricks, go to **Workflows → Delta Live Tables** (or **Lakeflow Pipelines**).
-2. Find `finance-etl-pipeline`.
-3. Click into it — you'll see the live DAG showing bronze → silver → gold flowing.
-4. Wait for status to show **Completed**.
-
-### Step 5 — Verify the Output Tables
+Run once to set up the workshop namespace.
 
 ```sql
--- In the Databricks SQL Editor:
-SELECT company_ticker, word_count, estimated_pages
-FROM catalog.schema.gold_10k_summary
-ORDER BY company_ticker;
+CREATE SCHEMA IF NOT EXISTS main.cp_nvidia;
+
+-- Volume for raw file landing zone (like an S3 bucket you can browse in the UI)
+CREATE VOLUME IF NOT EXISTS main.cp_nvidia.raw;
+
+SELECT 'Catalog, schema, and volume ready ✓' AS status;
 ```
 
-You should see one row per company (AAPL, AMZN, GOOG, META, MSFT, NVDA, TSLA).
+---
+
+## Method 1 — Manual Upload via UI → Auto Loader
+
+**Who this is for:** Anyone with a CSV or Excel export. No code needed to upload — Auto Loader handles the rest.
+
+### Step 1 — Upload Files in the UI
+
+1. Go to **Catalog** → `main` → `cp_nvidia` → **Volumes** → `raw`
+2. Click **Upload to this volume**
+3. Upload all 4 CSV files and 2 text files from the workshop repo `/data/` folder
+
+### Step 2 — Verify the Upload
+
+```python
+import os
+spark.sql("CREATE VOLUME IF NOT EXISTS main.cp_nvidia.csv")
+volume_path = "/Volumes/main/cp_nvidia/csv"
+
+files = dbutils.fs.ls(volume_path)
+print(f"Files in volume ({len(files)} total):")
+for f in files:
+    size_kb = round(f.size / 1024, 1)
+    print(f"  {f.name:<55} {size_kb:>8} KB")
+```
+
+### Step 3 — Ingest CSVs with Auto Loader
+
+Auto Loader (`cloudFiles`) incrementally ingests files as they land. It handles schema inference, bad records, and new files automatically — no manual schema definition needed.
+
+```python
+from pyspark.sql import functions as F
+
+pnl_raw = (
+    spark.read
+         .format("csv")
+         .option("header", "true")
+         .option("inferSchema", "false")   # keep everything as string — clean in notebook 02
+         .option("multiLine", "true")
+         .option("escape", '"')
+         .load("dbfs:/Volumes/main/cp_nvidia/csv/pnl_raw.csv")
+)
+
+print(f"P&L rows loaded    : {pnl_raw.count()}")
+print(f"Columns            : {len(pnl_raw.columns)}")
+pnl_raw.printSchema()
+display(pnl_raw.limit(5))
+```
+
+### Step 4 — Ingest All 4 CSVs and Write to Delta
+
+```python
+datasets = {
+    "pnl_raw":                    "pnl_raw.csv",
+    "budget_vs_actual_raw":       "budget_vs_actual_raw.csv",
+    "treasury_loans_raw":         "treasury_loans_raw.csv",
+    "customer_product_dim_raw":   "customer_product_dim_raw.csv",
+}
+
+for table_name, filename in datasets.items():
+    df = (
+        spark.read
+             .format("csv")
+             .option("header", "true")
+             .option("inferSchema", "false")
+             .option("multiLine", "true")
+             .option("escape", '"')
+             .load(f"{volume_path}/{filename}")
+    )
+    full_table = f"main.cp_nvidia.{table_name}"
+    df.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(full_table)
+    print(f"✓  {full_table:<55} {df.count():>5} rows")
+
+print("\n✅ All raw structured tables written to Unity Catalog.")
+```
 
 ---
 
-## Part D — Schedule the Pipeline (Optional)
+## Method 2 — Lakeflow Connect: Live SharePoint / GDrive Ingestion
 
-For a real deployment, you want new filings to be processed automatically:
+**Who this is for:** Finance teams who maintain their source-of-truth in SharePoint/OneDrive. Lakeflow Connect creates a **live, automatically refreshing** pipeline — no manual exports ever again.
 
-1. In Claude Code, type:
-   ```
-   Add a daily schedule to the finance-etl-pipeline so it runs at 7am UTC
-   ```
+### Architecture
 
-2. Or in Databricks UI: go to your pipeline → **Settings** → **Trigger** → **Scheduled** → set frequency.
+```
+SharePoint / OneDrive / Google Drive
+    │  (OAuth 2.0 — set up once)
+    ▼
+Lakeflow Connect Pipeline
+    │  (incremental, scheduled or triggered)
+    ▼
+Unity Catalog Delta Table  ──→  Genie  ──→  AI Agents
+```
+
+### Ingest Google Drive CSVs with Auto Loader
+
+```python
+df = (
+    spark.readStream.format("cloudFiles")
+        .option("cloudFiles.format", "csv")
+        .option("databricks.connection", "my_gdrive_conn")
+        .option("pathGlobFilter", "*.csv")
+        .option("inferColumnTypes", True)
+        .option("header", True)
+        .load("gdrivelink")
+)
+display(df)
+```
 
 ---
 
-## Summary
+## Method 3 — AI Dev Kit: Prompt-Driven Pipeline Building
 
-You now have three tools in your toolkit for data ingestion:
+**Who this is for:** Python users who want to build reusable pipelines fast without writing boilerplate from scratch.
 
-| Tool | Best For |
-|------|----------|
-| **Databricks Assistant** | Understanding existing code, making quick edits in notebooks |
-| **Data Science Agent** | Generating new notebook sections from plain English descriptions |
-| **AI Dev Kit + SDP** | Scaffolding production-grade ETL pipelines with bronze/silver/gold architecture |
+The [AI Dev Kit](https://github.com/databricks-solutions/ai-dev-kit) lets you describe what you want in plain English and generates Databricks-ready code.
 
-All three feed into the same output: clean Delta tables in `catalog.schema` that power the agents you build in Labs 1–5.
+### Example Prompts
 
-**Next:** [Lab 4 — Apps](04-apps.md)
+```
+"Create a Delta table from this CSV that auto-refreshes every hour"
+
+"Build a pipeline that reads PDF files from a volume and extracts text into a table"
+
+"Write a DLT pipeline that reads this CSV and writes a clean Gold table"
+
+"Generate a streaming pipeline that reads from Kafka and lands in Unity Catalog"
+```
+
+### Ingest Unstructured Text Files
+
+```python
+from pyspark.sql import functions as F
+
+text_files = [
+    "purchase_requests_emails.txt",
+    "earnings_call_transcript_excerpt.txt",
+]
+
+rows = []
+for filename in text_files:
+    path = f"{volume_path}/{filename}"
+    content = dbutils.fs.head(path, 1_000_000)   # read up to 1MB
+    rows.append((filename, content))
+
+docs_df = spark.createDataFrame(rows, ["filename", "content"]) \
+    .withColumn("word_count",   F.size(F.split(F.col("content"), r"\s+"))) \
+    .withColumn("char_count",   F.length(F.col("content"))) \
+    .withColumn("ingested_at",  F.current_timestamp())
+
+docs_df.write.mode("overwrite").saveAsTable("main.cp_nvidia.unstructured_docs_raw")
+print(f"✓ Ingested {docs_df.count()} documents into main.cp_nvidia.unstructured_docs_raw")
+display(docs_df.select("filename", "word_count", "char_count", "ingested_at"))
+```
+
+### AI Dev Kit — Generate a DLT Pipeline Scaffold
+
+```python
+import dlt
+from pyspark.sql import functions as F
+
+@dlt.table(comment="Raw P&L data from volume — bronze layer")
+def pnl_bronze():
+    return (
+        spark.read.format("csv")
+             .option("header", "true")
+             .option("inferSchema", "false")
+             .load("/Volumes/main/cp_nvidia/raw/pnl_raw.csv")
+    )
+
+@dlt.table(comment="Cleaned P&L — silver layer")
+@dlt.expect_or_drop("valid_revenue", "revenue_amount IS NOT NULL")
+def pnl_silver():
+    return (
+        dlt.read("pnl_bronze")
+           .withColumn("revenue_amount",
+               F.regexp_replace(F.col("Revenue"), r"[$,M]", "").cast("double") *
+               F.when(F.col("Revenue").contains("M"), 1e6).otherwise(1.0))
+    )
+
+@dlt.table(comment="Gold P&L — aggregated by segment and period")
+def pnl_gold():
+    return (
+        dlt.read("pnl_silver")
+           .groupBy("Business_Segment", "Period")
+           .agg(F.sum("revenue_amount").alias("total_revenue_usd"))
+    )
+```
+
+To deploy: go to **Workflows → Delta Live Tables → Create Pipeline** → paste this code.
+
+---
+
+## Method 4 — Databricks Assistant for Data Cleaning
+
+**Who this is for:** Anyone who needs to clean messy data interactively. The Databricks Assistant can help process columns, standardize formats, and extract structured data.
+
+### Example: Clean Revenue Column
+
+**Task:** The `Revenue` column contains mixed formats:
+- Currency symbols and codes (USD, JPY, SGD, EUR, $, ¥, €)
+- Commas in numbers (1,347)
+- Million suffixes (0.0M, 3.5M)
+- Inconsistent decimal places
+
+**Assistant Prompt:**
+```
+Read pnl_raw.csv and process the Revenue column:
+- Extract currency symbols/codes into a separate column
+- Convert text to actual numbers (handle commas, M suffix)
+- Keep 2 decimal places
+```
+
+### Example: Standardize Business Segments
+
+**Task:** The `Business_Segment` column has 24 variations of the same 4 categories:
+- "Prof-Svcs", "Prof. Services", "PROF_SVC", "PS" → Professional Services
+- "SW & Svcs", "software and services", "SWS" → Software & Services
+- "Compute HW", "COMPUTE_HW", "CHW" → Compute Hardware
+- "Cloud-Platform", "CP", "CLOUD_PLAT" → Cloud Platform
+
+**Assistant Prompt:**
+```
+Classify all business_segment values into distinct and similar categories
+```
+
+---
+
+## Method 5 — Extend the Assistant with ETL Best Practices Skill
+
+**Who this is for:** Teams building production ETL pipelines who need guidance on best practices. The Databricks Assistant can provide expert recommendations on Auto Loader, deduplication, MERGE operations, and Delta optimizations.
+
+> This method uses the **ETL Best Practices** skill added to your `.assistant/skills/` folder in the workspace.
+
+### Assistant Prompt
+
+```
+I need to build an ETL pipeline that ingests CSV files,
+deduplicates records, and writes to a Delta table.
+What are the best practices I should follow?
+```
+
+**What the Assistant provides (from your skill):**
+- Auto Loader configuration with schema inference
+- Deduplication strategies (window functions, content hashing)
+- MERGE operations for idempotent upserts
+- Delta optimization techniques (Z-Order, compaction, vacuum)
+- Error handling and monitoring patterns
+
+---
+
+## Final — Verify Tables in Unity Catalog
+
+```python
+try:
+    tables = spark.sql("SHOW TABLES IN main.cp_nvidia").collect()
+except Exception as e:
+    print(f"Error: {e}")
+    tables = []
+
+print("=" * 60)
+print(" Unity Catalog: main.cp_nvidia")
+print("=" * 60)
+for t in tables:
+    tname = t["tableName"]
+    try:
+        count = spark.table(f"main.cp_nvidia.{tname}").count()
+        print(f"  {tname:<45} {count:>6} rows")
+    except Exception as e:
+        print(f"  {tname:<45}  (error: {e})")
+
+print("\n✅ All tables ready.")
+print("   Next: Notebook 02 — ai_parse to normalize and structure the raw data")
+```
+
+---
+
+## Next Steps
+
+- **Lab 4** — Information Extraction Agent: parse unstructured text from emails and transcripts
+- **Lab 5** — Custom LLM Agent: build a finance Q&A agent over your Delta tables
