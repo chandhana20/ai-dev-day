@@ -1,7 +1,7 @@
 # Lab 3 — Data Ingestion
 
 **Time:** ~30 minutes
-**Goal:** Land raw finance data into Delta tables using five different ingestion methods — from manual CSV uploads to AI-assisted pipeline generation.
+**Goal:** Land raw finance data into Delta tables using four different ingestion methods — from manual CSV uploads to AI-assisted pipeline generation.
 
 ---
 
@@ -10,10 +10,9 @@
 | Method | Best For | Skill Level |
 |--------|----------|-------------|
 | **Manual Upload → Auto Loader** | CSVs, Excel exports, one-time loads | Beginner |
-| **Extend the Assistant with Agent Skills** | Domain-specific workflows, reusable ETL scripts | Intermediate |
+| **Databricks Assistant for Data Cleaning and ETL Skills** | Interactive cleaning, domain expertise, and ETL best practices | Beginner–Intermediate |
 | **Lakeflow Connect (SharePoint/GDrive)** | Live SharePoint/OneDrive data | Intermediate |
 | **AI Dev Kit** | Prompt-driven pipeline generation | Advanced |
-| **Databricks Assistant for Data Cleaning** | Interactive data cleaning and transformation | Beginner |
 
 ## Data We're Ingesting
 
@@ -126,14 +125,46 @@ print("\n✅ All raw structured tables written to Unity Catalog.")
 
 ---
 
-## Method 2 — Extend the Assistant with ETL Best Practices Skill
+## Method 2 — Databricks Assistant for Data Cleaning and ETL Best Practices
 
-**Who this is for:** Teams building production ETL pipelines who need guidance on best practices. The Databricks Assistant — enhanced with a domain-specific skill — provides expert recommendations on Auto Loader, deduplication, MERGE operations, and Delta optimizations.
+**Who this is for:** Anyone who needs to clean messy data interactively and build production-ready ETL pipelines. The Databricks Assistant — enhanced with a domain-specific skill — handles both interactive data cleaning and provides expert ETL guidance.
 
-> This method uses the **ETL Best Practices** skill added to your `.assistant/skills/` folder in the workspace.
+> The **ETL Best Practices** skill is added to your `.assistant/skills/` folder in the workspace.
 
-### Assistant Prompt
+### Interactive Data Cleaning
 
+#### Example: Clean Revenue Column
+
+**Task:** The `Revenue` column contains mixed formats:
+- Currency symbols and codes (USD, JPY, SGD, EUR, $, ¥, €)
+- Commas in numbers (1,347)
+- Million suffixes (0.0M, 3.5M)
+- Inconsistent decimal places
+
+**Assistant Prompt:**
+```
+Read pnl_raw.csv and process the Revenue column:
+- Extract currency symbols/codes into a separate column
+- Convert text to actual numbers (handle commas, M suffix)
+- Keep 2 decimal places
+```
+
+#### Example: Standardize Business Segments
+
+**Task:** The `Business_Segment` column has 24 variations of the same 4 categories:
+- "Prof-Svcs", "Prof. Services", "PROF_SVC", "PS" → Professional Services
+- "SW & Svcs", "software and services", "SWS" → Software & Services
+- "Compute HW", "COMPUTE_HW", "CHW" → Compute Hardware
+- "Cloud-Platform", "CP", "CLOUD_PLAT" → Cloud Platform
+
+**Assistant Prompt:**
+```
+Classify all business_segment values into distinct and similar categories
+```
+
+### ETL Best Practices (from Skill)
+
+**Assistant Prompt:**
 ```
 I need to build an ETL pipeline that ingests CSV files,
 deduplicates records, and writes to a Delta table.
@@ -255,41 +286,6 @@ To deploy: go to **Workflows → Delta Live Tables → Create Pipeline** → pas
 
 ---
 
-## Method 5 — Databricks Assistant for Data Cleaning
-
-**Who this is for:** Anyone who needs to clean messy data interactively. The Databricks Assistant can help process columns, standardize formats, and extract structured data.
-
-### Example: Clean Revenue Column
-
-**Task:** The `Revenue` column contains mixed formats:
-- Currency symbols and codes (USD, JPY, SGD, EUR, $, ¥, €)
-- Commas in numbers (1,347)
-- Million suffixes (0.0M, 3.5M)
-- Inconsistent decimal places
-
-**Assistant Prompt:**
-```
-Read pnl_raw.csv and process the Revenue column:
-- Extract currency symbols/codes into a separate column
-- Convert text to actual numbers (handle commas, M suffix)
-- Keep 2 decimal places
-```
-
-### Example: Standardize Business Segments
-
-**Task:** The `Business_Segment` column has 24 variations of the same 4 categories:
-- "Prof-Svcs", "Prof. Services", "PROF_SVC", "PS" → Professional Services
-- "SW & Svcs", "software and services", "SWS" → Software & Services
-- "Compute HW", "COMPUTE_HW", "CHW" → Compute Hardware
-- "Cloud-Platform", "CP", "CLOUD_PLAT" → Cloud Platform
-
-**Assistant Prompt:**
-```
-Classify all business_segment values into distinct and similar categories
-```
-
----
-
 ## Final — Verify Tables in Unity Catalog
 
 ```python
@@ -311,12 +307,4 @@ for t in tables:
         print(f"  {tname:<45}  (error: {e})")
 
 print("\n✅ All tables ready.")
-print("   Next: Notebook 02 — ai_parse to normalize and structure the raw data")
 ```
-
----
-
-## Next Steps
-
-- **Lab 4** — Information Extraction Agent: parse unstructured text from emails and transcripts
-- **Lab 5** — Custom LLM Agent: build a finance Q&A agent over your Delta tables
