@@ -32,7 +32,7 @@ Add both of the following tables to this Genie space:
 
 **Table 1 — Stock Ticker Data:**
 1. Click **Add Table**.
-2. Select: catalog.schema.ticker_data_mag7
+2. Select: `catalog.schema.ticker_data_mag7` (replace `catalog` and `schema` with your values)
 3. This table contains daily stock prices (open, close, volume, date) for the Mag 7.
 4. Click **Add**.
 
@@ -48,17 +48,18 @@ Add both of the following tables to this Genie space:
 
 The two tables use different identifiers — `catalog.schema.ticker_data_mag7` uses `company_name` (e.g., `MSFT`) while the KIE table uses `stock_symbol`. You need to tell Genie the right way to join them.
 
-1. In the Genie , add SQL query as instruction:
-To calculate max close price 
+1. In the Genie, add SQL query as instruction:
+To calculate max close price
 ```sql
 SELECT
   MAX(t.price_close)    AS max_close_price
-FROM main.fins_agent_bricks_demo.ticker_data_mag7 t
-JOIN main.fins_agent_bricks_demo.`kie-87141233-endpoint_responses_wide` k
+FROM catalog.schema.ticker_data_mag7 t
+JOIN catalog.schema.`kie-endpoint_responses_wide` k
   ON t.company_name = k.stock_symbol
 WHERE t.company_name = 'AAPL'
   AND t.price_close IS NOT NULL;
 ```
+> Replace `catalog.schema` with your actual catalog and schema values before running.
 
 2. Run it and confirm it returns results.
 3. Click **Add as Instruction** — this teaches Genie the correct join pattern for all future queries.
