@@ -1,8 +1,8 @@
 """
 MAG-7 Ticker Data Explorer -- Databricks App (Streamlit)
 
-Reads from Unity Catalog table main.fins_agent_bricks_demo.ticker_data_mag7
-using the databricks-sql-connector and displays interactive charts and tables
+Reads from Unity Catalog table {CATALOG}.{SCHEMA}.{TABLE} using the
+databricks-sql-connector and displays interactive charts and tables
 for the Magnificent Seven stocks (AAPL, AMZN, GOOGL, META, MSFT, NVDA, TSLA).
 
 Follows the apps-cookbook tables_read pattern:
@@ -33,7 +33,14 @@ cfg = Config()
 WAREHOUSE_ID = os.getenv("DATABRICKS_WAREHOUSE_ID", "75fd8278393d07eb")
 HTTP_PATH = f"/sql/1.0/warehouses/{WAREHOUSE_ID}"
 
-TABLE_NAME = "main.fins_agent_bricks_demo.ticker_data_mag7"
+# ---------------------------------------------------------------------------
+# Data source configuration — set via environment variables or update defaults
+# ---------------------------------------------------------------------------
+CATALOG = os.getenv("DATABRICKS_CATALOG", "main")
+SCHEMA  = os.getenv("DATABRICKS_SCHEMA", "fins_agent_bricks_demo")
+TABLE   = os.getenv("DATABRICKS_TABLE",  "ticker_data_mag7")
+
+TABLE_NAME = f"{CATALOG}.{SCHEMA}.{TABLE}"
 
 # Columns to read (excluding `peg` which has void type)
 COLUMNS = (
