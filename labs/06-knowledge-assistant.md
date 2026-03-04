@@ -172,4 +172,4 @@ You built a knowledge assistant that:
 - Answers natural language research questions with source citations
 - Is guardrailed to stay within the Mag 7 universe
 
-**Next:** [Lab 4 — Genie Space Setup](04-genie-setup.md)
+**Next:** [Lab 7 — Multi-Agent Orchestration](07-multi-agent.md)
