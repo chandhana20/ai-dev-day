@@ -22,17 +22,33 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Configuration — Set your catalog and schema
+# Update these values to match your Unity Catalog setup.
+# These variables are referenced throughout the notebook.
+
+CATALOG = "main"             # e.g. "main" or your custom catalog name
+SCHEMA  = "finance_workshop" # e.g. "finance_workshop" or your schema name
+
+VOLUME_PATH = f"/Volumes/{CATALOG}/{SCHEMA}/csv"
+
+print(f"Catalog     : {CATALOG}")
+print(f"Schema      : {SCHEMA}")
+print(f"Volume path : {VOLUME_PATH}")
+
+# COMMAND ----------
+
 # DBTITLE 1,0 — Setup: Create catalog, schema, and volume
-# MAGIC
-# MAGIC %sql
-# MAGIC -- Run once to set up the workshop namespace
-# MAGIC CREATE CATALOG IF NOT EXISTS main;
-# MAGIC CREATE SCHEMA IF NOT EXISTS main.finance_workshop;
-# MAGIC
-# MAGIC -- Volume for raw file landing zone (like an S3 bucket you can browse in the UI)
-# MAGIC CREATE VOLUME IF NOT EXISTS main.finance_workshop.raw;
-# MAGIC
-# MAGIC SELECT 'Catalog, schema, and volume ready ✓' AS status;
+from pyspark.sql import functions as F
+
+# Run once to set up the workshop namespace
+spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG}")
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA}")
+
+# Volume for raw file landing zone (like an S3 bucket you can browse in the UI)
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA}.raw")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA}.csv")
+
+print(f"Catalog, schema, and volume ready: {CATALOG}.{SCHEMA} ✓")
 
 # COMMAND ----------
 
@@ -43,7 +59,7 @@
 # MAGIC No code needed to upload. Auto Loader handles the rest.
 # MAGIC
 # MAGIC ### Step 1: Upload files in the UI
-# MAGIC 1. Go to **Catalog** → `main` → `finance_workshop` → `Volumes` → `raw`
+# MAGIC 1. Go to **Catalog** → your catalog → your schema → `Volumes` → `csv`
 # MAGIC 2. Click **Upload to this volume**
 # MAGIC 3. Upload all 4 CSV files and 2 text files from the workshop repo `/data/` folder
 # MAGIC
@@ -53,10 +69,7 @@
 
 # DBTITLE 1,1a — Verify files landed in the volume
 
-import os
-volume_path = "/Volumes/cp_catalog/nvidia/csv"
-
-files = dbutils.fs.ls(volume_path)
+files = dbutils.fs.ls(VOLUME_PATH)
 print(f"Files in volume ({len(files)} total):")
 for f in files:
     size_kb = round(f.size / 1024, 1)
@@ -75,8 +88,6 @@ for f in files:
 
 # DBTITLE 1,1b — Ingest P&L CSV with Auto Loader (schema inference)
 
-from pyspark.sql import functions as F
-
 # Auto Loader: reads CSVs in the volume, infers schema, handles new files automatically
 pnl_raw = (
     spark.read
@@ -85,7 +96,7 @@ pnl_raw = (
          .option("inferSchema", "false")   # keep everything as string — we'll clean in notebook 02
          .option("multiLine", "true")
          .option("escape", '"')
-         .load(f"/Volumes/cp_catalog/nvidia/csv/pnl_raw.csv")
+         .load(f"{VOLUME_PATH}/pnl_raw.csv")
 )
 
 print(f"P&L rows loaded    : {pnl_raw.count()}")
@@ -113,9 +124,9 @@ for table_name, filename in datasets.items():
              .option("inferSchema", "false")
              .option("multiLine", "true")
              .option("escape", '"')
-             .load(f"{volume_path}/{filename}")
+             .load(f"{VOLUME_PATH}/{filename}")
     )
-    full_table = f"main.finance_workshop.{table_name}"
+    full_table = f"{CATALOG}.{SCHEMA}.{table_name}"
     df.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(full_table)
     print(f"✓  {full_table:<55} {df.count():>5} rows")
 
@@ -125,7 +136,7 @@ print("\n✅ All raw structured tables written to Unity Catalog.")
 
 # MAGIC %md
 # MAGIC ## Method 2 — Lakeflow Connect: Live SharePoint, GDrive Ingestion
-# MAGIC Notebooks to show 
+# MAGIC Notebooks to show
 # MAGIC https://dogfood.staging.databricks.com/editor/notebooks/3064659049279702?o=6051921418418893
 # MAGIC
 # MAGIC **Who this is for:** Finance teams who maintain their source-of-truth in SharePoint/OneDrive.
@@ -213,12 +224,12 @@ display(df)
 # DBTITLE 1,2c — Simulate SharePoint pipeline output
 
 # Simulate what Lakeflow Connect would deliver — same result, no credentials needed for demo
-sharepoint_sim = spark.table("main.finance_workshop.budget_vs_actual_raw") \
+sharepoint_sim = spark.table(f"{CATALOG}.{SCHEMA}.budget_vs_actual_raw") \
     .withColumn("_ingestion_source", F.lit("sharepoint://Finance/FY24 Budget/")) \
     .withColumn("_ingested_at", F.current_timestamp()) \
     .withColumn("_pipeline", F.lit("finance_sharepoint_budget_pipeline"))
 
-sharepoint_sim.write.mode("overwrite").saveAsTable("main.finance_workshop.budget_sharepoint_simulated")
+sharepoint_sim.write.mode("overwrite").saveAsTable(f"{CATALOG}.{SCHEMA}.budget_sharepoint_simulated")
 print(f"✓ Simulated SharePoint ingestion: {sharepoint_sim.count()} rows")
 print("  In production: this table auto-refreshes whenever SharePoint changes.")
 display(sharepoint_sim.limit(5))
@@ -266,7 +277,7 @@ text_files = [
 
 rows = []
 for filename in text_files:
-    path = f"{volume_path}/{filename}"
+    path = f"{VOLUME_PATH}/{filename}"
     content = dbutils.fs.head(path, 1_000_000)   # read up to 1MB
     rows.append((filename, content))
 
@@ -275,8 +286,8 @@ docs_df = spark.createDataFrame(rows, ["filename", "content"]) \
     .withColumn("char_count",   F.length(F.col("content"))) \
     .withColumn("ingested_at",  F.current_timestamp())
 
-docs_df.write.mode("overwrite").saveAsTable("main.finance_workshop.unstructured_docs_raw")
-print(f"✓ Ingested {docs_df.count()} documents into main.finance_workshop.unstructured_docs_raw")
+docs_df.write.mode("overwrite").saveAsTable(f"{CATALOG}.{SCHEMA}.unstructured_docs_raw")
+print(f"✓ Ingested {docs_df.count()} documents into {CATALOG}.{SCHEMA}.unstructured_docs_raw")
 display(docs_df.select("filename", "word_count", "char_count", "ingested_at"))
 
 # COMMAND ----------
@@ -287,7 +298,7 @@ display(docs_df.select("filename", "word_count", "char_count", "ingested_at"))
 # "Write a DLT pipeline that reads pnl_raw.csv and produces a clean gold table"
 
 # This is what AI Dev Kit generates:
-dlt_scaffold = '''
+dlt_scaffold = f"""
 import dlt
 from pyspark.sql import functions as F
 
@@ -297,7 +308,7 @@ def pnl_bronze():
         spark.read.format("csv")
              .option("header", "true")
              .option("inferSchema", "false")
-             .load("/Volumes/main/finance_workshop/raw/pnl_raw.csv")
+             .load("/Volumes/{CATALOG}/{SCHEMA}/raw/pnl_raw.csv")
     )
 
 @dlt.table(comment="Cleaned P&L — silver layer")
@@ -306,7 +317,7 @@ def pnl_silver():
     return (
         dlt.read("pnl_bronze")
            .withColumn("revenue_amount",
-               F.regexp_replace(F.col("Revenue"), r"[$,M]", "").cast("double") *
+               F.regexp_replace(F.col("Revenue"), "[$,M]", "").cast("double") *
                F.when(F.col("Revenue").contains("M"), 1e6).otherwise(1.0))
     )
 
@@ -317,7 +328,7 @@ def pnl_gold():
            .groupBy("Business_Segment", "Period")
            .agg(F.sum("revenue_amount").alias("total_revenue_usd"))
     )
-'''
+"""
 
 print("AI Dev Kit generated DLT pipeline scaffold:")
 print(dlt_scaffold)
@@ -332,14 +343,14 @@ print("\nTo deploy: go to Workflows → Delta Live Tables → Create Pipeline �
 
 # DBTITLE 1,Final — Inventory all tables created
 
-tables = spark.sql("SHOW TABLES IN main.finance_workshop").collect()
+tables = spark.sql(f"SHOW TABLES IN {CATALOG}.{SCHEMA}").collect()
 print("=" * 60)
-print(" Unity Catalog: main.finance_workshop")
+print(f" Unity Catalog: {CATALOG}.{SCHEMA}")
 print("=" * 60)
 for t in tables:
     tname = t["tableName"]
     try:
-        count = spark.table(f"main.finance_workshop.{tname}").count()
+        count = spark.table(f"{CATALOG}.{SCHEMA}.{tname}").count()
         print(f"  {tname:<45} {count:>6} rows")
     except Exception as e:
         print(f"  {tname:<45}  (error: {e})")
