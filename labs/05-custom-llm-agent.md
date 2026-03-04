@@ -174,4 +174,4 @@ You built an agent that:
 - Generates a structured, citation-backed analyst memo in seconds
 - Follows consistent format guidelines enforced by an LLM judge
 
-**Next:** [Lab 3 — Knowledge Assistant](03-knowledge-assistant.md)
+**Next:** [Lab 6 — Knowledge Assistant](06-knowledge-assistant.md)
