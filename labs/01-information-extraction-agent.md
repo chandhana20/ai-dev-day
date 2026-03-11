@@ -1,151 +1,123 @@
-# Lab 4 — Information Extraction (KIE)
+# Lab 2 — Information Extraction
 
 **Time:** ~25 minutes
-**Goal:** Build an AI agent that automatically extracts structured financial metrics (revenue, net income, debt ratios, etc.) from 10-K SEC filings and stores them in a Delta table.
+**Goal:** Use AgentBricks Information Extraction to automatically parse 10-K SEC filings (PDFs) into a structured Delta table — no code required.
 
-**Business Problem:** Equity analysts spend hours manually pulling numbers from 10-Ks. This agent does it in seconds — consistently and at scale.
+**Business Problem:** Finance teams spend hours manually pulling numbers from 10-K filings. Information Extraction does it in minutes — consistently and at scale.
 
 ---
 
 ## Overview
 
-You will use **AgentBricks → Key Information Extraction (KIE)** to:
-1. Define the fields you want to extract (revenue, net income, etc.)
-2. Run the agent against sample 10-K documents
-3. Tune field definitions to improve accuracy
-4. Export results to a Delta table via a pipeline
+You will use **AgentBricks → Information Extraction** to:
+1. Parse raw PDF documents (10-K filings) into a structured table
+2. Build an extraction agent that identifies key financial fields
+3. Generate a schema from the parsed data
+4. Create the agent and run it at scale
 
 ---
 
-## Step 1 — Create a New KIE Agent
+## Prerequisites
 
-1. Go to **AI & BI → AgentBricks**.
-2. Click **Create Agent**.
-3. Select **Key Information Extraction**.
-4. Give it a name: `10k-extractor`
-5. Click **Next**.
+- A **SQL Warehouse** must be running before you start. If you don't have one:
+  - Go to **Compute** in the left sidebar
+  - Click **Create** → **SQL Warehouse**
+  - Choose a size (Small is fine for this lab) and click **Create**
+  - Wait for it to start (green status)
 
----
-
-## Step 2 — Connect Your Data Source
-
-1. Under **Data Source**, select **Unity Catalog Volume**.
-2. Choose: **your catalog → your schema → 10k**
-3. Click **Sample Documents** — AgentBricks will pull a few PDFs to test against.
-4. Click **Next**.
+- Your 10-K PDF files should already be uploaded to a Unity Catalog Volume (e.g., `your_catalog.your_schema.10k`)
 
 ---
 
-## Step 3 — Define the Fields to Extract
+## Step 1 — Parse PDFs into a Table
 
-You will define the schema — the specific data points you want the agent to pull from each filing.
+### 1.1 Navigate to Information Extraction
+- In the left sidebar, click **AI/ML** → **Agents**
+- Click **Information Extraction**
 
-Click **Add Fields** and add the following one by one:
+### 1.2 Select "Use PDFs"
+- Click **Use PDFs** as your first step
+- This tells AgentBricks you want to extract structured data from PDF documents
 
-| Field Name | Type | Description |
-|------------|------|-------------|
-| `company_name` | string | Legal name of the company on the 10-K cover page |
-| `stock_symbol` | string | Stock ticker symbol (e.g., AAPL, NVDA) |
-| `fiscal_year_end` | string | End date of the fiscal year in format dd-mm-yyyy |
-| `total_revenue` | number | Total company revenue in USD millions |
-| `operating_income` | number | Operating income in USD millions |
-| `net_income` | number | Net income in USD millions |
-| `total_assets` | number | Total assets in USD millions |
-| `total_liabilities` | number | Total liabilities in USD millions |
-| `long_term_debt` | number | Long-term debt in USD millions |
-| `cash_and_cash_equivalents` | number | Cash and equivalents in USD millions |
-| `capital_expenditures` | number | Capital expenditure in USD millions |
-| `r_and_d_expense` | number | Research and development expense in USD millions |
-| `total_employees` | number | Total number of full-time employees |
-| `principal_executive_officer` | string | Name of the CEO |
-| `independent_auditor` | string | Name of the auditing firm |
+### 1.3 Select Your PDF Source Folder
+- Browse to the Unity Catalog Volume that contains your 10-K filings
+- Example: `your_catalog.your_schema.10k`
+- Click to select the folder
 
-> **Tip:** Click **Auto-generate fields** first — AgentBricks may suggest many of these automatically.
+### 1.4 Set the Destination Table
+- Choose where you want the parsed output to be written
+- Select your **catalog** and **schema**
+- Enter a table name, e.g., `10k_parsed`
+- Full path example: `your_catalog.your_schema.10k_parsed`
 
----
+### 1.5 Select a SQL Warehouse
+- Pick the SQL Warehouse you started in the prerequisites
+- **Important:** The warehouse must already be running — it will not auto-start
 
-## Step 4 — Run Against Sample Documents
+### 1.6 Start the Import
+- Click **Start Import**
+- This will take **~15–20 minutes** to process all your PDFs
+- AgentBricks reads each PDF, extracts text and structure, and writes the results to your destination table
+- You can navigate away and come back — the job runs in the background
 
-1. Click **Run on Samples**.
-2. Wait ~1–2 minutes while the agent processes the sample 10-K PDFs.
-3. Review the results table — each column is a field you defined, each row is a document.
-
-**Check for issues:**
-- Are dates formatted correctly? (should be `dd-mm-yyyy`)
-- Are numeric fields returning numbers, not strings?
-- Are any fields returning `null` when you'd expect a value?
+### 1.7 Verify the Parsed Table
+- Once complete, go to **Catalog** → browse to `your_catalog.your_schema.10k_parsed`
+- Click **Sample Data** to confirm the PDFs were parsed correctly
 
 ---
 
-## Step 5 — Tune Field Definitions
+## Step 2 — Build the Extraction Agent
 
-Fix any issues you spotted. Common tweaks:
+### 2.1 Navigate Back to Information Extraction
+- Go to **AI/ML** → **Agents** → **Information Extraction**
+- Click **Build**
 
-**Fix the date format:**
-1. Click on the `fiscal_year_end` field.
-2. Update the description to:
-   > "The end date of the company's fiscal year. Must be in the format dd-mm-yyyy."
-3. Click **Save**.
+### 2.2 Select Your Parsed Table as the Dataset
+- Click **Unlabeled Dataset**
+- Go into **Dataset Selection**
+- Browse and select the parsed table you created in Step 1 (e.g., `your_catalog.your_schema.10k_parsed`)
+- Click **Use This Table**
 
-**Fix numeric fields returning as strings:**
-1. Click on any numeric field (e.g., `operating_income`) that returned a string.
-2. Change the **Type** from `string` to `number`.
-3. Update the description to include: "Should be a numerical value in USD millions."
-4. Click **Save**.
+### 2.3 Generate the Schema
+- Wait for the system to process sample documents from your parsed table
+- AgentBricks will automatically generate a **sample JSON output** — this is the proposed extraction schema
+- Review the generated fields — they should include financial metrics like revenue, net income, total assets, etc.
 
-After making changes, click **Re-run on Samples** to see improvements.
+### 2.4 Choose Your Optimization Strategy
+- You will see two options:
+  - **Optimize for Scale** — faster and cheaper, best for large volumes of similar documents
+  - **Optimize for Complexity** — more accurate on complex or varied documents, costs more per document
+- For 10-K filings (standardized format, high volume), **Optimize for Scale** is recommended
+- For diverse or unusual document types, choose **Optimize for Complexity**
 
----
-
-## Step 6 — Run Evaluation
-
-1. Click the **Evaluation** tab.
-2. Review the assessments — the LLM judge scores each field extraction.
-3. Drill into individual results to see which fields scored well vs. poorly.
-4. If a field is consistently wrong, go back to Step 5 and refine its description.
-
----
-
-## Step 7 — (Optional) Optimize for Cost
-
-1. Once you're happy with quality, click **Optimize**.
-2. AgentBricks will find a smaller, cheaper model that achieves similar quality.
-3. Compare the **quality score** and **cost per document** between models.
-4. Select your preferred model.
-
----
-
-## Step 8 — Create a Pipeline to Populate a Delta Table
-
-1. Click **Use** → **Create ETL Pipeline**.
-2. Name the pipeline: `10k-extraction-pipeline`
-3. Click **Start** — this will process all 10-K PDFs and write results to a Delta table.
-4. Once complete, go to **your catalog → your schema** in the Catalog and find the new table.
-5. Click **Sample Data** to verify the extracted fields look correct.
-
-> The pipeline creates a structured Delta table you can query with SQL or use in Genie (Lab 4).
+### 2.5 Create the Agent
+- Click **Create Agent**
+- AgentBricks builds your extraction agent with the generated schema and optimization settings
+- Once created, you can run it against your full document set to populate a structured Delta table
 
 ---
 
 ## Verify Your Output
 
-Run this in the SQL Editor to confirm your pipeline worked:
+Run this in the SQL Editor to confirm extraction worked:
 
 ```sql
-SELECT company_name, stock_symbol, fiscal_year_end, total_revenue, net_income
-FROM catalog.schema.`10k-extraction-pipeline_responses_wide`
-ORDER BY company_name;
+SELECT *
+FROM your_catalog.your_schema.10k_parsed
+LIMIT 10;
 ```
 
-You should see one row per 10-K filing with structured financial data.
+You should see structured rows with extracted financial data from your 10-K filings.
 
 ---
 
 ## Summary
 
-You built an agent that:
-- Reads raw PDF filings from a Unity Catalog volume
-- Extracts 15+ structured financial fields per document
-- Stores results in a queryable Delta table
+You built an Information Extraction agent that:
+- **Parsed** raw PDF filings into a structured table (no code)
+- **Generated** an extraction schema automatically from sample data
+- **Created** a reusable agent optimized for your document type
 
-**Next:** [Lab 2 — Genie Space](02-genie-setup.md)
+All done through the UI — no coding required.
+
+**Next:** [Lab 3 — Genie Space](02-genie-setup.md)
